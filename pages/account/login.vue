@@ -80,4 +80,10 @@
   body{}
   .box-card{margin-top: 80px}
   .submit-btn{width: 100%}
+  @media (max-width: 768px){
+    .el-col-xs-18 .el-card{
+      border: none;
+      box-shadow: none;
+    }
+  }
 </style>
