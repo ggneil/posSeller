@@ -17,7 +17,9 @@
           <a class="info-setting" href="">设置</a>
         </p>
         <div class="create-btn">
-          <el-button type="primary">创建店铺</el-button>
+          <nuxt-link to="/shop/create">
+            <el-button type="primary">创建店铺</el-button>
+          </nuxt-link>
         </div>
       </el-row>
       <el-row class="box">
