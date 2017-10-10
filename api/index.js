@@ -21,15 +21,15 @@ router.use((req, res, next) => {
 
 // Add POST - /api/login
 router.post('/login', (req, res) => {
-  axios.post('/seller/account/login', { mobile: req.body.mobile, password: req.body.password }).then( (result) => {
-    if (result.data.error){
-      return res.json({ error: { msg: result.data.error.msg }})
+  axios.post('/seller/account/login', { mobile: req.body.mobile, password: req.body.password }).then((result) => {
+    if (result.data.error) {
+      return res.json({ error: {msg: result.data.error.msg} })
     } else {
       req.session.authUser = result.data
-      return res.json({ user : result.data.user })
+      return res.json({ user: result.data.user })
     }
-  }).catch( (err) => {
-    res.status(401).json({ message: '服务器异常，请稍后再试' })
+  }).catch((e) => {
+    res.status(401).json({message: '服务器异常，请稍后再试'})
   })
 })
 

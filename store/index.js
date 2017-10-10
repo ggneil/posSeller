@@ -28,7 +28,7 @@ export const actions = {
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        throw new Error(error.response.message)
+        throw new Error(error.response.data.message)
       }
       throw error
     }
