@@ -38,5 +38,4 @@ export const actions = {
     await axios.post('/api/logout')
     commit('SET_USER', null)
   }
-
 }

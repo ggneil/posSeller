@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
     <el-row class="main">
-      <el-col :lg="4" :md="4" :sm="0" :xs="0">
+      <el-col :span="4">
         <el-menu mode="vertical" default-active="1" class="menu">
           <el-menu-item-group title="分组一">
             <el-menu-item index="1"><i class="el-icon-message"></i>导航一</el-menu-item>
@@ -22,7 +22,7 @@
           </el-menu-item-group>
         </el-menu>
       </el-col>
-      <el-col :lg="{span:18,offset:1}" :md="{span:18,offset:1}" class="content">
+      <el-col :span="20" :offset="0" class="content">
         <nuxt/>
       </el-col>
     </el-row>
@@ -47,7 +47,8 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 2020;
+    z-index: 100;
+    border-bottom: 1px solid #eee;
   }
   .head-content {
     height: 56px;
@@ -72,5 +73,4 @@
   .el-menu {
     border-right: none;
   }
-  .main .content{margin-top: 30px}
 </style>
