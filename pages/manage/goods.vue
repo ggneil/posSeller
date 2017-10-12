@@ -1,7 +1,6 @@
 <template>
   <div>
-    </el-tabs>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="商品管理" name="first">
         <div v-show="show">
           <el-row class="henglan">
