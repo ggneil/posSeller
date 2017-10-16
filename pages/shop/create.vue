@@ -9,8 +9,7 @@
           <el-form-item prop="name" label="店铺名称"
             :rules="[
               { required: true, message: '店铺名称不能为空'},
-            ]"
-          >
+            ]">
             <el-input v-model="shopInfo.name" placeholder="请输入店铺名称"></el-input>
           </el-form-item>
           <el-form-item label="店铺LOGO">
@@ -27,8 +26,7 @@
           <el-form-item label="营业时间" prop="checkedDay"
             :rules="[
               { required: true, message: '请选择营业时间' },
-            ]"
-          >
+            ]">
             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
             <div style="margin: 15px 0;"></div>
             <el-checkbox-group v-model="shopInfo.checkedDay" @change="handleCheckedDayChange">
@@ -73,12 +71,10 @@
           <el-form-item prop="address" label=""
             :rules="[
               { required: true, message: '请输入详细地址' },
-            ]"
-          >
+            ]">
             <el-input
               v-model="shopInfo.address"
-              placeholder="请输入详细地址"
-            >
+              placeholder="请输入详细地址">
             </el-input>
           </el-form-item> 
           <el-form-item>

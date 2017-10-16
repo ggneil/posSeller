@@ -1,33 +1,21 @@
 <template>
-  <div>
-    <el-row class="head">
-      <el-col :span="24" class="head-content">
-        <i class="el-icon-menu"></i>
-      </el-col>
-    </el-row>
-    <el-row class="main">
-      <el-col :span="4">
-        <el-menu mode="vertical" default-active="1" class="menu">
-          <el-menu-item-group title="分组一">
-            <el-menu-item index="1"><i class="el-icon-message"></i>导航一</el-menu-item>
-            <el-menu-item index="2"><i class="el-icon-message"></i>导航二</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="分组二">
-            <el-menu-item index="3"><i class="el-icon-message"></i>导航三</el-menu-item>
-            <el-menu-item index="4"><i class="el-icon-message"></i>导航四</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="分组三">
-            <el-menu-item index="3"><i class="el-icon-message"></i>导航五</el-menu-item>
-            <el-menu-item index="4"><i class="el-icon-message"></i>导航六</el-menu-item>
-          </el-menu-item-group>
-        </el-menu>
-      </el-col>
-      <el-col :span="20" :offset="0" class="content">
-        <nuxt/>
-      </el-col>
-    </el-row>
-  </div>
+  <el-row class="main">
+    <el-col :span="3">
+      <el-menu mode="vertical" default-active="1" class="menu">
+        <el-menu-item index="1">商品管理</el-menu-item>
+        <el-menu-item index="2">订单管理</el-menu-item>
+        <el-menu-item index="3">数据分析</el-menu-item>
+      </el-menu>
+    </el-col>
+    <el-col :span="21" :offset="0" class="content">
+      <nuxt/>
+    </el-col>
+  </el-row>
 </template>
+
+<script>
+export default {}
+</script>
 
 <style>
   html {
@@ -43,7 +31,6 @@
   }
   body {margin: 0}
   .head {
-    background: #ffffff;
     position: fixed;
     top: 0;
     width: 100%;
@@ -64,11 +51,9 @@
     -webkit-justify-content: space-between;
     justify-content: space-between;
   }
-  .main {
-    margin-top: 56px;
-  }
   .main .menu {
-    background: #f5f5f5;
+    text-align: center;
+    border-right: 1px solid #eee;
   }
   .el-menu {
     border-right: none;

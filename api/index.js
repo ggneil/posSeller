@@ -3,7 +3,7 @@ const express = require('express')
 let options = {
   timeout: 5000
 }
-options.baseURL = 'http://pos.wangdoukeji.com'
+// options.baseURL = 'http://localhost:3000'
 const axios = pg_axios.create(options)
 // Create express router
 const router = express.Router()
