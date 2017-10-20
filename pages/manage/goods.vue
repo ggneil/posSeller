@@ -205,12 +205,10 @@
           }
         }
       }
-      // 页面加载请求
-      this.pageLoad()
       return {
         zhuangtai: '',
         zhuangtaiBtn: '',
-        shopId: 1,
+        shopId: '',
         imgId: 0,
         groupId: '',
         navId: '',
@@ -259,6 +257,11 @@
           label: '已上架'
         }]
       }
+    },
+    beforeMount () {
+      this.shopId = localStorage.getItem('shop_id')
+      // 页面加载请求
+      this.pageLoad()
     },
     methods: {
       // 搜索商品
@@ -345,7 +348,7 @@
       },
       // 页面加载
       pageLoad () {
-        axios.post('/seller/Tags/getTagsList', { shop_id: 1 }).then((res) => {
+        axios.post('/seller/Tags/getTagsList', { shop_id: this.shopId }).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {

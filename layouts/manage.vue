@@ -1,10 +1,11 @@
 <template>
   <el-row class="main">
     <el-col :span="3">
-      <el-menu mode="vertical" default-active="1" class="menu">
-        <el-menu-item index="1">商品管理</el-menu-item>
-        <el-menu-item index="2">订单管理</el-menu-item>
-        <el-menu-item index="3">数据分析</el-menu-item>
+      <el-menu mode="vertical" default-active="1" class="menu" :router="true">
+        <el-menu-item index="/manage/goods">商品管理</el-menu-item>
+        <el-menu-item index="/manage/orderManage">订单管理</el-menu-item>
+        <el-menu-item index="/manage/dataCenter">数据分析</el-menu-item>
+        <el-menu-item index="/manage/shopManage">店铺管理</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="21" :offset="0" class="content">
@@ -14,7 +15,9 @@
 </template>
 
 <script>
-export default {}
+export default {
+  // middleware: 'auth'
+}
 </script>
 
 <style>

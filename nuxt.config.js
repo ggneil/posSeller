@@ -65,5 +65,8 @@ module.exports = {
     // Api middleware
     // We add /api/login & /api/logout routes
     '~/api'
-  ]
+  ],
+  routes: {
+    middleware: 'auth'
+  }
 }

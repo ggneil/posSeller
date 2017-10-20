@@ -45,6 +45,7 @@
               <el-col :span="6">
                 <div class="block" v-show="show">
                   <el-date-picker
+                    @change="timeChange1"
                     v-model="dateValue1"
                     align="right"
                     type="date"
@@ -56,6 +57,7 @@
                 </div>
                 <div class="block" v-show="!show">
                   <el-date-picker
+                    @change="timeChange1"
                     v-model="dateValue2"
                     type="daterange"
                     align="right"
@@ -129,6 +131,7 @@
                     size="small"
                     :editable="false"
                     placeholder="选择月"
+                    @change='timeChange2'
                     :picker-options="pickerOptions2">
                   </el-date-picker>
                 </div>
@@ -188,6 +191,7 @@
                     v-model="dateValue4"
                     align="right"
                     type="date"
+                    @change="timeChange3"
                     placeholder="选择日期"
                     :editable="false"
                     size="small"
@@ -198,6 +202,7 @@
                   <el-date-picker
                     v-model="dateValue5"
                     type="daterange"
+                    @change="timeChange3"
                     align="right"
                     placeholder="选择日期范围"
                     :editable="false"
@@ -244,23 +249,25 @@
 </template>
 
 <script>
+  import axios from '../../plugins/axios'
   export default {
     layout: 'manage',
     data () {
       var timerFirst = new Date()
       return {
+        shopId: localStorage.getItem('shop_id'),
         // 新老客户表格
         tableData: [{
           newCustomer: '新成交客户',
           payMoney: '0.00',
           moneyCompare: '0.00',
-          payPeopleNum: 0,
+          payPeopleNum: '',
           peopleNumCompare: '0.00'
         }, {
           newCustomer: '老成交客户',
           payMoney: '0.00',
           moneyCompare: '0.00',
-          payPeopleNum: 0,
+          payPeopleNum: '',
           peopleNumCompare: '0.00'
         }],
         // 商品分析表格
@@ -344,6 +351,11 @@
         dateValue3: '', // 自定义日期 数据概况
         dateValue4: '', // 自然日日期 商品分析
         dateValue5: '', // 自定义日期 商品分析
+        value1: '', // 自然日日期交易情况自然日日期范围交易情况
+        value2: '', // 自然日日期范围交易情况
+        value3: '', // 自然月
+        value4: '', // 商品分析日期商品分析日期范围
+        value5: '', // 商品分析日期范围
         dayOptions: [{
           value: '选项1',
           label: '自然日'
@@ -378,7 +390,131 @@
         activeName: 'first' // 第一个显示 商品管理
       }
     },
+    beforeMount () {
+      this.pageLoad()
+    },
     methods: {
+      // 页面加载
+      pageLoad () {
+        this.nowLoad()
+        this.searchLoad()
+        this.dealFormLoad()
+        this.goodsInfoLoad()
+      },
+      // 第一次日期筛选触发事件
+      timeChange1 (shijian) {
+        this.value1 = ''
+        this.value2 = ''
+        if (shijian.length > 2) {
+          this.value1 = shijian
+        } else {
+          this.value1 = shijian[0]
+          this.value2 = shijian[1]
+        }
+        this.searchLoad()
+      },
+      // 第二次交易构成月份筛选
+      timeChange2 (shijian) {
+        this.value3 = shijian
+      },
+      // 第三次商品分析时间筛选
+      timeChange3 (shijian) {
+        this.value4 = ''
+        this.value5 = ''
+        if (shijian.length > 2) {
+          this.value4 = shijian
+        } else {
+          this.value4 = shijian[0]
+          this.value5 = shijian[1]
+        }
+        this.goodsInfoLoad()
+      },
+      // 实时数据加载
+      nowLoad () {
+        axios.post('/seller/data/todayRealTime?shop_id=' + this.shopId).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: '实时数据：' + res.data.error.msg
+            })
+          } else {
+            this.todayVisitorNum = res.data.today_visitors
+            this.yesterdayVisitorNum = res.data.yesterday_visitors
+            this.todayBrowseNum = res.data.today_view
+            this.yesterdayBrowseNum = res.data.yesterday_view
+            this.todayOrderNum = res.data.today[0].num
+            this.yesterdayOrderNum = res.data.yes[0].num
+            this.todayMoney = res.data.today[0].sum
+            this.yesterdayMoney = res.data.yes[0].sum
+          }
+        })
+      },
+      // 商品分析加载
+      goodsInfoLoad () {
+        axios.post('/seller/Data/goodsAnalyze?shop_id=' + this.shopId + '&time_from=' + this.value4 + '&time_to=' + this.value5).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.goodsTableData = []
+            for (var keys in res.data.ga) {
+              this.goodsTableData.push({
+                name: res.data.ga[keys].goods_name,
+                payPeopleNum: res.data.ga[keys].pay_ren_shu,
+                sellNum: res.data.ga[keys].num,
+                average: res.data.ga[keys].ren_jun
+              })
+            }
+          }
+        })
+      },
+      // 交易情况查询
+      searchLoad () {
+        axios.post('/seller/Data/tradingOutlook?shop_id=' + this.shopId + '&time_from=' + this.value1 + '&time_to=' + this.value2).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.VisitorNum = res.data.visitors
+            this.OrderVisitorNum = res.data.orders[0].order_ren_shu
+            this.OrderNum = res.data.orders[0].order_bi_shu
+            this.OrderMoney = res.data.orders[0].order_jin_e
+            this.PayVisitorNum = res.data.pay[0].pay_ren_shu
+            this.PayNum = res.data.pay[0].pay_ding_dan
+            this.PayMoney = res.data.pay[0].pay_jin_e
+            this.PayOneMoney = res.data.pay[0].ke_dan_jia
+          }
+        })
+      },
+      // 交易构成
+      dealFormLoad () {
+        axios.post('/seller/Data/tradeComposition?shop_id=' + this.shopId + '&month=' + this.value3).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.tableData = [{
+              newCustomer: '新成交客户',
+              payMoney: res.data.new.new_jin_e,
+              moneyCompare: res.data.new.new_jin_e_rate + '%',
+              payPeopleNum: res.data.new.new_ren_shu,
+              peopleNumCompare: res.data.new.new_ren_shu_rate + '%'
+            }, {
+              newCustomer: '老成交客户',
+              payMoney: res.data.old.old_jin_e,
+              moneyCompare: res.data.old.old_jin_e_rate + '%',
+              payPeopleNum: res.data.old.old_ren_shu,
+              peopleNumCompare: res.data.old.old_ren_shu_rate + '%'
+            }]
+          }
+        })
+      },
       // tab点击数据更新
       handleClick (tab, event) {
         this.dateValue1 = '' // 自定义日期
@@ -386,21 +522,28 @@
         this.dateValue3 = '' // 自定义日期 数据概况
         this.dateValue4 = '' // 自然日日期 商品分析
         this.dateValue5 = '' // 自定义日期 商品分析
+        this.value1 = ''
+        this.value2 = ''
+        this.value3 = ''
+        this.value4 = ''
+        this.value5 = ''
         this.show = true
         this.dayValue = '选项1' // 多选框时间
         this.MonthValue = '选项1' // 多选框时间
         var timer = new Date()
         this.time = timer.getFullYear() + '-' + timer.getMonth() + '-' + timer.getDate() + '  ' + timer.getHours() + '：' + timer.getMinutes() + '：' + timer.getSeconds()
-        console.log(tab, event)
+        this.pageLoad()
       },
       // 日期选择下拉框改变事件
       handleChange (label) {
         if (label === '选项1') {
           this.show = true
           this.dateValue2 = '' // 自然日日期
+          this.dateValue5 = '' // 自然日日期
         } else {
           this.show = false
           this.dateValue1 = '' // 自定义日期
+          this.dateValue4 = '' // 自定义日期
         }
       }
     }

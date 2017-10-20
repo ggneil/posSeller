@@ -15,7 +15,7 @@
           <el-form-item label="店铺LOGO">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="http://pos.wangdoukeji.com/api/Attachment/upload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload">
@@ -36,7 +36,7 @@
               class="Mtop"
               :editable="false"
               placeholder="起始时间"
-              v-model="shopInfo.startTime"
+              v-model="shopInfo.startTime1"
               :picker-options="{
                 start: '06:00',
                 step: '00:15',
@@ -48,14 +48,69 @@
               class="Mtop"
               :editable="false"
               placeholder="结束时间"
-              v-model="shopInfo.endTime"
+              v-model="shopInfo.endTime1"
               :picker-options="{
                 start: '06:00',
                 step: '00:15',
                 end: '24:00',
-                minTime: shopInfo.startTime
+                minTime: shopInfo.startTime1
               }">
             </el-time-select>
+          </el-form-item>
+          <el-form-item v-show="tianjia1">
+            <el-time-select
+              class="Mtop"
+              :editable="false"
+              placeholder="起始时间"
+              v-model="shopInfo.startTime2"
+              :picker-options="{
+                start: '06:00',
+                step: '00:15',
+                end: '24:00'
+              }">
+            </el-time-select>
+            <span class="timeInp Mtop">至</span>  
+            <el-time-select
+              class="Mtop"
+              :editable="false"
+              placeholder="结束时间"
+              v-model="shopInfo.endTime2"
+              :picker-options="{
+                start: '06:00',
+                step: '00:15',
+                end: '24:00',
+                minTime: shopInfo.startTime2
+              }">
+            </el-time-select>
+          </el-form-item>
+          <el-form-item v-show="tianjia2">
+            <el-time-select
+              class="Mtop"
+              :editable="false"
+              placeholder="起始时间"
+              v-model="shopInfo.startTime3"
+              :picker-options="{
+                start: '06:00',
+                step: '00:15',
+                end: '24:00'
+              }">
+            </el-time-select>
+            <span class="timeInp Mtop">至</span>  
+            <el-time-select
+              class="Mtop"
+              :editable="false"
+              placeholder="结束时间"
+              v-model="shopInfo.endTime3"
+              :picker-options="{
+                start: '06:00',
+                step: '00:15',
+                end: '24:00',
+                minTime: shopInfo.startTime3
+              }">
+            </el-time-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="text" @click="addTime">添加时段</el-button>
           </el-form-item>
           <el-form-item prop="mobile" label="电话">
             <el-input v-model="shopInfo.mobile" placeholder="手机号码"></el-input>
@@ -64,8 +119,9 @@
             <br />
             <el-cascader
               :options="province"
-              @active-item-change="handleDistictChange"
-              :props="props">
+              @change="addressID"
+              v-model="shopInfo.cityOption"
+              @active-item-change="handleDistictChange">
             </el-cascader>
           </el-form-item>
           <el-form-item prop="address" label=""
@@ -106,17 +162,23 @@
         shopInfo: {
           name: '',
           checkedDay: dayOptions,
-          startTime: '08:00',
-          endTime: '20:00',
+          startTime1: '08:00',
+          endTime1: '20:00',
+          startTime2: '',
+          endTime2: '',
+          startTime3: '',
+          endTime3: '',
           mobile: '',
           address: '',
-          cityOption: []
+          addressId: '',
+          cityOption: [],
+          imgId: ''
         },
+        userId: 1,
+        addIndex: 0,
+        tianjia1: false,
+        tianjia2: false,
         province: [],
-        props: {
-          value: 'id',
-          label: 'name'
-        },
         dayOptions: dayOptions,
         checkAll: true,
         isIndeterminate: true,
@@ -124,29 +186,78 @@
         submit_loading: false,
         rules: {
           mobile: [{ validator: validateMobile, required: true, trigger: 'blur' }],
-          cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'change' }]
+          cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'blur' }]
         }
       }
     },
-    mounted: () => {
+    beforeMount () {
       axios.post('/seller/shop/getaddress', { id: 0 }).then((res) => {
-        this.province = res.data.address
+        for (var keys in res.data.address) {
+          this.province.push({
+            value: res.data.address[keys].id,
+            label: res.data.address[keys].name,
+            children: []
+          })
+        }
       })
     },
     methods: {
+      // 地址id
+      addressID (value) {
+        this.shopInfo.addressId = value[2]
+      },
+      // 判断对象值返回索引
+      indexThis (val, obj) {
+        for (var i in obj) {
+          if (obj[i].value === val) {
+            return i
+          }
+        }
+      },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!')
+            console.log(this.shopInfo)
+            axios.post('/seller/Shop/create?user_id=' + this.userId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId).then((res) => {
+              if (res.data.error) {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              } else {
+                this.$message({
+                  type: 'success',
+                  message: '创建店铺成功'
+                })
+                location.href = '/shop/shopList'
+              }
+            })
           } else {
             console.log('error submit!!')
             return false
           }
         })
       },
-  
+      // 添加时段
+      addTime () {
+        this.addIndex += 1
+        if (this.addIndex === 1) {
+          this.tianjia1 = true
+          this.shopInfo.startTime2 = this.shopInfo.endTime1
+        } else if (this.addIndex === 2) {
+          this.tianjia2 = true
+          this.shopInfo.startTime3 = this.shopInfo.endTime2
+        } else {
+          this.$message({
+            type: 'error',
+            message: '已经添加不了更多了'
+          })
+        }
+      },
       handleAvatarSuccess (res, file) {
         this.logoUrl = URL.createObjectURL(file.raw)
+        this.shopInfo.imgId = res.id
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
@@ -169,6 +280,31 @@
         let checkedCount = value.length
         this.checkAll = checkedCount === dayOptions.length
         this.isIndeterminate = checkedCount > 0 && checkedCount < dayOptions.length
+      },
+      handleDistictChange (value1) {
+        console.log(value1.length)
+        if (value1.length === 1) {
+          this.province[value1[0] - 1].children = []
+          axios.post('/seller/shop/getaddress?id=' + value1[0]).then((res) => {
+            for (var keys in res.data.address) {
+              this.province[value1[0] - 1].children.push({
+                value: res.data.address[keys].id,
+                label: res.data.address[keys].name,
+                children: []
+              })
+            }
+          })
+        } else if (value1.length === 2) {
+          this.province[value1[0] - 1].children[this.indexThis(value1[1], this.province[value1[0] - 1].children)].children = []
+          axios.post('/seller/shop/getaddress?id=' + value1[1]).then((res) => {
+            for (var keys in res.data.address) {
+              this.province[value1[0] - 1].children[this.indexThis(value1[1], this.province[value1[0] - 1].children)].children.push({
+                value: res.data.address[keys].id,
+                label: res.data.address[keys].name
+              })
+            }
+          })
+        }
       }
     }
   }
