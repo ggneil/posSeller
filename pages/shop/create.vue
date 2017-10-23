@@ -146,6 +146,7 @@
   import axios from '../../plugins/axios'
   const dayOptions = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
   export default {
+    // middleware: 'auth', // 中间件登陆之后才可以看到
     data () {
       var validateMobile = (rule, value, callback) => {
         if (value === '') {

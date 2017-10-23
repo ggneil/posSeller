@@ -255,7 +255,7 @@
     data () {
       var timerFirst = new Date()
       return {
-        shopId: localStorage.getItem('shop_id'),
+        shopId: 1,
         // 新老客户表格
         tableData: [{
           newCustomer: '新成交客户',
@@ -391,6 +391,7 @@
       }
     },
     beforeMount () {
+      this.shopId = localStorage.getItem('shop_id')
       this.pageLoad()
     },
     methods: {

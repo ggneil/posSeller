@@ -10,11 +10,18 @@
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">店铺Logo：</el-col>
-            <el-col :span="21"><img class="imgSize1" src="../../static/weixin.png"></img></el-col>
+            <el-col :span="21"><img class="imgSize1" :src="shopInfo.logoUrl"></img></el-col>
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">营业时间：</el-col>
-            <el-col :span="21">{{店铺名称}}</el-col>
+            <el-col :span="21">
+              <el-row>
+                <el-col>{{shopInfo.week}}</el-col>
+                <el-col>{{openTime1}}</el-col>
+                <el-col v-if="openTime2">{{openTime2}}</el-col>
+                <el-col v-if="openTime3">{{openTime3}}</el-col>
+              </el-row>
+            </el-col>
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">店铺电话：</el-col>
@@ -22,7 +29,7 @@
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">所在地区：</el-col>
-            <el-col :span="21">{{shopInfo.address}}</el-col>
+            <el-col :span="21">{{shopInfo.area + " " + shopInfo.address}}</el-col>
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1"><el-button @click="pageShow" type="primary">修改信息</el-button></el-col>
@@ -46,11 +53,11 @@
               <el-form-item label="店铺LOGO">
                 <el-upload
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
+                  action="http://pos.wangdoukeji.com/api/Attachment/upload"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
-                  <img v-if="logoUrl" :src="logoUrl" class="avatar">
+                  <img v-if="shopInfo.logoUrl" :src="shopInfo.logoUrl" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
               </el-form-item>
@@ -197,6 +204,7 @@
       return {
         activeName: 'first', // 默认加载店铺信息
         shopId: 1,
+        userId: 1,
         shopInfo: {
           name: '',
           checkedDay: dayOptions,
@@ -210,6 +218,9 @@
           address: '',
           cityOption: []
         },
+        openTime1: '',
+        openTime2: '',
+        openTime3: '',
         tianjia1: false,
         tianjia2: false,
         addIndex: 0,
@@ -232,6 +243,8 @@
     },
     beforeMount () {
       this.shopId = localStorage.getItem('shop_id')
+      // this.userId = localStorage.getItem('user_id')
+      this.shopInfoLoad()
       axios.post('/seller/shop/getaddress', { id: 0 }).then((res) => {
         for (var keys in res.data.address) {
           this.province.push({
@@ -280,18 +293,39 @@
               message: res.data.error.msg
             })
           } else {
+            var url = 'http://pos.wangdoukeji.com/'
             this.shopInfo = {
               name: res.data.shop[0].name,
-              checkedDay: dayOptions,
-              startTime1: res.data.shop_time,
-              endTime1: '20:00',
-              startTime2: '',
-              endTime2: '',
-              startTime3: '',
-              endTime3: '',
-              mobile: '',
-              address: '',
+              checkedDay: res.data.shop_time[0].week.split(','),
+              startTime1: res.data.shop_time[0].start1,
+              endTime1: res.data.shop_time[0].end1,
+              startTime2: res.data.shop_time[0].start2,
+              endTime2: res.data.shop_time[0].end2,
+              startTime3: res.data.shop_time[0].start3,
+              endTime3: res.data.shop_time[0].end3,
+              mobile: res.data.shop[0].service_mobile,
+              address: res.data.shop[0].address,
+              imgId: res.data.shop[0].logo,
+              addressId: '',
+              area: res.data.shop[0].area_id,
+              logoUrl: url + res.data.shop[0].path.replace(/\\/, ''),
+              week: res.data.shop_time[0].week,
               cityOption: []
+            }
+            this.openTime1 = this.shopInfo.startTime1 + ' 至 ' + this.shopInfo.endTime1
+            if (this.shopInfo.startTime2 === '0' && this.shopInfo.endTime2 === '0') {
+              this.shopInfo.startTime2 = ''
+              this.shopInfo.endTime2 = ''
+              this.openTime2 = ''
+            } else {
+              this.openTime2 = this.shopInfo.startTime2 + ' 至 ' + this.shopInfo.endTime2
+            }
+            if (this.shopInfo.startTime3 === '0' && this.shopInfo.endTime3 === '0') {
+              this.shopInfo.startTime3 = ''
+              this.shopInfo.endTime3 = ''
+              this.openTime3 = ''
+            } else {
+              this.openTime3 = this.shopInfo.startTime3 + ' 至 ' + this.shopInfo.endTime3
             }
           }
         })
@@ -307,7 +341,20 @@
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!')
+            axios.post('/seller/Shop/editShop?shop_id=' + this.shopId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId).then((res) => {
+              if (res.data.error) {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              } else {
+                this.$message({
+                  type: 'success',
+                  message: '创建店铺成功'
+                })
+                location.href = '/manage/shopManage'
+              }
+            })
           } else {
             console.log('error submit!!')
             return false
@@ -321,13 +368,10 @@
         this.tianjia1 = false
         this.tianjia2 = false
         this.addIndex = 0
-        this.shopInfo.startTime2 = ''
-        this.shopInfo.endTime2 = ''
-        this.shopInfo.startTime3 = ''
-        this.shopInfo.endTime2 = ''
       },
       handleAvatarSuccess (res, file) {
-        this.logoUrl = URL.createObjectURL(file.raw)
+        this.shopInfo.logoUrl = URL.createObjectURL(file.raw)
+        this.shopInfo.imgId = res.id
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
@@ -380,11 +424,11 @@
   }
 </script>
 
-<style scope>
+<style>
   /*店铺信息*/
-  .navTitle{line-height: 40px;background-color: white;color: black;padding-left: 20px;margin-bottom: 10px;}
-  .navBody{line-height: 40px;background-color: white}
-  .navContent{padding-top: 20px;padding-bottom: 20px;background-color: white;margin-bottom: 10px}
+  .navTitle{line-height: 40px;background-color: white;color: black;padding-left: 20px;margin-bottom: 5px;border-bottom:1px solid #eee;}
+  .navBody{line-height: 40px;background-color: white;}
+  .navContent{padding-top: 20px;padding-bottom: 20px;background-color: white;margin-bottom: 5px;border-bottom:1px solid #eee;}
   /*店铺信息结束*/
   .imgSize1{width:78px;height: 78px;}
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;}

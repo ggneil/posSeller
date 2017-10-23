@@ -209,6 +209,7 @@
         zhuangtai: '',
         zhuangtaiBtn: '',
         shopId: '',
+        input: '',
         imgId: 0,
         groupId: '',
         navId: '',
@@ -265,12 +266,13 @@
     },
     methods: {
       // 搜索商品
-      searchGoods (value) {
-        axios.post('/seller/Goods/queryGoods', { key: value }).then((res) => {
+      searchGoods (value1) {
+        axios.post('/seller/Goods/queryGoods', { key: value1 }).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {
-            if (value === '') {
+            this.value = '所有状态'
+            if (value1 === '') {
               axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: this.navId }).then((res) => {
                 if (res.data.error) {
                   console.log(res.data.error.msg)
@@ -411,6 +413,7 @@
                 this.imageUrl = ''
                 this.imgId = 0
                 if (style === '1') {
+                  this.pageLoad()
                   this.handleShow()
                 }
               }
@@ -425,10 +428,10 @@
       // 顶部nav点击、打开、关闭事件
       handleClick (tab, event) {
         this.show = true
-        console.log(tab, event)
       },
       // 状态查看 
       handleStatusSelect (value) {
+        this.input = ''
         axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: this.navId }).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
@@ -487,6 +490,8 @@
       },
       // 分组选择事件
       handleGroupSelect (key, keyPath) {
+        this.value = '所有状态'
+        this.input = ''
         this.navId = keyPath[0]
         axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: keyPath[0] }).then((res) => {
           if (res.data.error) {
@@ -521,33 +526,54 @@
       },
       // 删除组
       handleDelete (index, row) {
-        axios.post('/seller/Tags/deleteTag', { tag_id: row[index].id }).then((res) => {
-          if (res.data.error) {
-            console.log(res.data.error.msg)
-          } else {
-            row.splice(index, 1)
-            this.pageLoad()
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-          }
+        this.$confirm('是否删除' + row[index].fenzu + '？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('/seller/Tags/deleteTag', { tag_id: row[index].id }).then((res) => {
+            if (res.data.error) {
+              console.log(res.data.error.msg)
+            } else {
+              row.splice(index, 1)
+              this.pageLoad()
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       },
       // 商品删除组
       handleDelete1 (index, row) {
-        console.log(row)
-        axios.post('/seller/Goods/deleteGoods', { goods_id: row[index].goodsId }).then((res) => {
-          if (res.data.error) {
-            console.log(res.data.error.msg)
-          } else {
-            row.splice(index, 1)
-            this.pageLoad()
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-          }
+        this.$confirm('是否删除' + row[index].goodsName + '?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('/seller/Goods/deleteGoods', { goods_id: row[index].goodsId }).then((res) => {
+            if (res.data.error) {
+              console.log(res.data.error.msg)
+            } else {
+              row.splice(index, 1)
+              this.pageLoad()
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       },
       // 上下架商品

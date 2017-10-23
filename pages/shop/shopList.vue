@@ -6,8 +6,8 @@
     </el-col>
     <el-col class="smallBox" :span="6" v-for="(o, index) in shopInfo.length" :key="o" :offset="index % 3 == 0 ? 1 : 2">
       <el-card :body-style="{ padding: '0px' }">
-        <div style="height:100px;overflow:hidden;">
-          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508423488947&di=76353e30541ec6bcf1aa15a270886c4c&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Ffcfaaf51f3deb48fbb0bc61ff91f3a292cf57894.jpg" class="image">
+        <div style="height:120px;overflow:hidden;">
+          <img :src="shopInfo[index].logoUrl" class="image">
         </div>
         <div style="padding: 14px;">
           <span>{{shopInfo[index].name}}</span>
@@ -24,7 +24,9 @@
 
 <script>
   import axios from '../../plugins/axios'
+  var url = 'http://pos.wangdoukeji.com/'
   export default {
+    // middleware: 'auth', // 中间件登陆之后才可以看到
     data () {
       return {
         userId: 1,
@@ -50,12 +52,14 @@
                 this.shopInfo.push({
                   name: res.data.shop_list[keys].name,
                   shopId: res.data.shop_list[keys].shop_id,
+                  logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
                   operating: '营业中'
                 })
               } else {
                 this.shopInfo.push({
                   name: res.data.shop_list[keys].name,
                   shopId: res.data.shop_list[keys].shop_id,
+                  logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
                   operating: '已打烊'
                 })
               }
@@ -147,6 +151,7 @@
   }
   .image {
     width: 100%;
+    min-height: 120px;
     display: block;
   }
 
