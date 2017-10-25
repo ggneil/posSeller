@@ -29,8 +29,12 @@
           数据分析
         </el-menu-item>
         <el-menu-item index="/manage/shopManage">
-          <i class="store-management"></i>
-          店铺管理
+        <i class="store-management"></i>
+        店铺管理
+        </el-menu-item>
+        <el-menu-item index="/manage/shopManage">
+          <i class="application-plug-in"></i>
+          应用插件
         </el-menu-item>
       </el-menu>
       <div class="acccount">
@@ -168,6 +172,9 @@ export default {
   }
   .store-management {
     background: url("../static/icon.png") 0 -120px no-repeat;
+  }
+  .application-plug-in {
+    background: url("../static/icon.png") 0 -168px no-repeat;
   }
   /*用户信息*/
   .userinfo {
