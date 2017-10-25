@@ -1,17 +1,17 @@
 <template>
   <el-row class="main">
-    <el-col :span="3">
+    <el-col :span="3" class="el-left">
       <div class="personal">
         <div class="personal-logo">
           <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508737964800&di=8b52e1cb9ab1e70adb91cdb0b77bc54f&imgtype=0&src=http%3A%2F%2Fe.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D6023c0be1c950a7b756046c03fe14eef%2F50da81cb39dbb6fd7e4d7eae0824ab18972b3727.jpg" alt="">
         </div>
         <div class="personal-information">
           <div class="personal-name">
-            asdfghjkl
+            username
           </div>
           <div class="authentication">
             <span class="verification">未验证</span>
-            <span class="restaurant">都点餐饮</span>
+            <span class="restaurant">豆点餐饮</span>
           </div>
         </div>
       </div>
@@ -96,7 +96,6 @@ export default {
     justify-content: space-between;
   }
   .main .menu {
-    /*text-align: center;*/
     border-right: 1px solid #eee;
     border-top: 1px solid #eee;
     padding-left: 5%;
@@ -104,10 +103,19 @@ export default {
   .el-menu {
     border-right: none;
   }
+  .el-col{
+    height: 100%;
+  }
+  .el-left {
+    position: fixed;
+  }
+  .content {
+    padding-left: 13%;
+  }
   /*个人信息*/
   .personal{
     width: 100%;
-    padding: 15px;
+    padding: 15px 0 15px 15px;
     box-sizing: border-box;
     overflow: hidden;
     border-right: 1px solid #e6e6e6;
@@ -162,9 +170,6 @@ export default {
     background: url("../static/icon.png") 0 -120px no-repeat;
   }
   /*用户信息*/
-  .acccount:hover  {
-
-  }
   .userinfo {
     position: fixed;
     padding: 16px 0;
@@ -175,7 +180,7 @@ export default {
     background: #fff;
     cursor: pointer;
   }
-  .userinfo__avatar {
+  .userinfo-avatar {
     position: absolute;
     top: 16px;
     left: 15px;
@@ -183,7 +188,7 @@ export default {
     height: 18px;
     background: url(../static/userinfo.png) no-repeat 0 -175px;
   }
-  .userinfo__phone {
+  .userinfo-phone {
     color: #555;
     font-size: 14px;
     line-height: 18px;
@@ -217,11 +222,25 @@ export default {
     overflow: hidden;
   }
   .userinfo-pop-bd {
-    padding: 10px 0 0;
+    padding: 5px 20px;
     line-height: 30px;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
   }
   .userinfo-pop-ft {
-    padding: 10px 0;
+    padding: 10px 20px;
     line-height: 30px;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .userinfo-pop-bd:hover {
+    background: #38f;
+    color: #fff;
+  }
+  .userinfo-pop-ft:hover {
+    background: #38f;
+    color: #fff;
   }
 </style>

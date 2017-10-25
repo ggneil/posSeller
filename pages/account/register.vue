@@ -10,26 +10,21 @@
                         <el-input v-model="loginForm.mobile" placeholder="手机号码"></el-input>
                     </el-form-item>
                     <el-form-item prop="password">
-                        <el-input v-model="loginForm.password" placeholder="设置密码"></el-input>
-                    </el-form-item>
-                    <el-form-item prop="verification" class="verification">
-                        <el-input v-model="loginForm.verification" @keyup.enter.native="register" placeholder="输入验证码"></el-input>
-                    </el-form-item>
-                    <el-form-item class="obtain-verification">
-                        <button class="time-btn" v-if="sendMsgDisabled" disabled="">{{time+'秒后获取'}}</button>
-                        <button class="obtain-btn" @click="send" v-if="!sendMsgDisabled">获取验证码</button>
+                        <el-input v-model="loginForm.password" @keyup.enter.native="login" placeholder="注册密码"></el-input>
                     </el-form-item>
                     <el-form-item class="submit-box">
-                        <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="register">注册</el-button>
+                        <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">注册</el-button>
                     </el-form-item>
+                    <a href="login" class="login">立即登陆</a>
                 </el-form>
             </el-card>
         </el-col>
     </el-row>
-
 </template>
 
 <script>
+  import axios from '../../plugins/axios'
+
   export default {
     data () {
       var validateMobile = (rule, value, callback) => {
@@ -43,38 +38,23 @@
           }
         }
       }
-      var code = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入验证码'))
-        } else {
-          if (!/^\d{6}$/.test(value)) {
-            callback(new Error('请输入6位验证码'))
-          } else {
-            callback()
-          }
-        }
-      }
       return {
         loginForm: {
           mobile: '',
-          password: '',
-          Verification: ''
+          password: ''
         },
         submit_loading: false,
         rules: {
           mobile: [{ validator: validateMobile, trigger: 'blur' }],
           password: [
-            { required: true, message: '请设置密码', trigger: 'blur' },
+            { required: true, message: '请输入密码', trigger: 'blur' },
             { min: 6, max: 24, message: '长度在 6 到 24 个字符', trigger: 'blur' }
-          ],
-          verification: [{ validator: code, trigger: 'blur' }]
-        },
-        time: 60,
-        sendMsgDisabled: false
+          ]
+        }
       }
     },
     methods: {
-      async register () {
+      async login () {
         let $valid = false
         await this.$refs['loginForm'].validate((valid) => {
           if (valid) {
@@ -84,31 +64,23 @@
         if ($valid) {
           this.submit_loading = true
           try {
-            await this.$store.dispatch('register', {
+            await this.$store.dispatch('login', {
               mobile: this.loginForm.mobile,
-              password: this.loginForm.password,
-              verification: this.loginForm.verification
+              password: this.loginForm.password
             })
           } catch (e) {
             this.submit_loading = false
             this.$message.error(e.message)
           }
+          axios.post('/seller/user/register?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
+            if (res.data.error) {
+              alert(res.data.error.msg)
+            } else {
+              location.assign('/account/login')
+            }
+          })
         }
-      },
-      //    验证码
-      send () {
-        let me = this
-        me.sendMsgDisabled = true
-        let interval = window.setInterval(function () {
-          if ((me.time--) <= 0) {
-            me.time = 60
-            me.sendMsgDisabled = false
-            window.clearInterval(interval)
-          }
-        }, 1000)
-      //      发送请求post发送短信
       }
-
     }
   }
 </script>
@@ -156,5 +128,11 @@
     .submit-box{
         width: 100%;
         overflow: hidden;
+    }
+    .login{
+        text-decoration: none;
+        display: block;
+        text-align: right;
+        color: #6e6e6e;
     }
 </style>

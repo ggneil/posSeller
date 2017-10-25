@@ -15,14 +15,16 @@
           <el-form-item class="submit-box">
             <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">登录</el-button>
           </el-form-item>
+          <a href="register" class="register">立即注册</a>
         </el-form>
       </el-card>
     </el-col>
   </el-row>
-
 </template>
 
 <script>
+  import axios from '../../plugins/axios'
+
   export default {
     data () {
       var validateMobile = (rule, value, callback) => {
@@ -45,7 +47,7 @@
         rules: {
           mobile: [{ validator: validateMobile, trigger: 'blur' }],
           password: [
-            { required: true, message: '请输入验证码', trigger: 'blur' },
+            { required: true, message: '请输入密码', trigger: 'blur' },
             { min: 6, max: 24, message: '长度在 6 到 24 个字符', trigger: 'blur' }
           ]
         }
@@ -70,6 +72,14 @@
             this.submit_loading = false
             this.$message.error(e.message)
           }
+          axios.post('/seller/user/login?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
+            if (res.data.error) {
+              alert(res.data.error.msg)
+            } else {
+              alert(res.data.user_id)
+              location.assign('/manage/goods')
+            }
+          })
         }
       }
     }
@@ -85,5 +95,11 @@
       border: none;
       box-shadow: none;
     }
+  }
+  .register{
+    text-decoration: none;
+    display: block;
+    text-align: right;
+    color: #6e6e6e;
   }
 </style>
