@@ -29,17 +29,19 @@
     // middleware: 'auth', // 中间件登陆之后才可以看到
     data () {
       return {
-        userId: 1,
+        userId: '',
         shopInfo: [],
         currentDate: new Date()
       }
     },
     beforeMount () {
+      this.userId = localStorage.getItem('user_id')
       this.shopInfoLoad()
     },
     methods: {
       // 店铺列表加载
       shopInfoLoad () {
+        console.log(this.userId)
         axios.post('/seller/shop/getShopList?user_id=' + this.userId).then((res) => {
           if (res.data.error) {
             this.$message({
@@ -47,21 +49,24 @@
               message: res.data.error.msg
             })
           } else {
-            for (var keys in res.data.shop_list) {
-              if (res.data.shop_list[keys].status === 1) {
-                this.shopInfo.push({
-                  name: res.data.shop_list[keys].name,
-                  shopId: res.data.shop_list[keys].shop_id,
-                  logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
-                  operating: '营业中'
-                })
-              } else {
-                this.shopInfo.push({
-                  name: res.data.shop_list[keys].name,
-                  shopId: res.data.shop_list[keys].shop_id,
-                  logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
-                  operating: '已打烊'
-                })
+            if (res.data.shop_list.length === 0) {
+            } else {
+              for (var keys in res.data.shop_list) {
+                if (res.data.shop_list[keys].status === 1) {
+                  this.shopInfo.push({
+                    name: res.data.shop_list[keys].name,
+                    shopId: res.data.shop_list[keys].shop_id,
+                    logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
+                    operating: '营业中'
+                  })
+                } else {
+                  this.shopInfo.push({
+                    name: res.data.shop_list[keys].name,
+                    shopId: res.data.shop_list[keys].shop_id,
+                    logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
+                    operating: '已打烊'
+                  })
+                }
               }
             }
           }

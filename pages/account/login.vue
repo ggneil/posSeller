@@ -76,8 +76,9 @@
             if (res.data.error) {
               alert(res.data.error.msg)
             } else {
-              alert(res.data.user_id)
-              location.assign('/manage/goods')
+              var userId = res.data.user_id
+              localStorage.setItem('user_id', userId)
+              location.assign('/shop/shopList')
             }
           })
         }

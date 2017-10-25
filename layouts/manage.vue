@@ -3,14 +3,14 @@
     <el-col :span="3" class="el-left">
       <div class="personal">
         <div class="personal-logo">
-          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508737964800&di=8b52e1cb9ab1e70adb91cdb0b77bc54f&imgtype=0&src=http%3A%2F%2Fe.hiphotos.baidu.com%2Fzhidao%2Fwh%253D450%252C600%2Fsign%3D6023c0be1c950a7b756046c03fe14eef%2F50da81cb39dbb6fd7e4d7eae0824ab18972b3727.jpg" alt="">
+          <img :src="shopInfo.imglogo" alt="">
         </div>
         <div class="personal-information">
           <div class="personal-name">
-            username
+            {{shopInfo.username}}
           </div>
           <div class="authentication">
-            <span class="verification">未验证</span>
+            <span class="verification">{{verification}}</span>
             <span class="restaurant">豆点餐饮</span>
           </div>
         </div>
@@ -40,15 +40,15 @@
       <div class="acccount">
         <div class="userinfo">
           <div class="userinfo-avatar"></div>
-          <div class="userinfo-phone">15666666666</div>
+          <div class="userinfo-phone">{{shopInfo.mobile}}</div>
         </div>
         <div class="personal-center">
           <div class="userinfo-pop-hd">
             <div>rootuser</div>
-            <div>15666666666</div>
+            <div>{{shopInfo.mobile}}</div>
           </div>
           <div class="userinfo-pop-bd">账号设置</div>
-          <div class="userinfo-pop-bd">切换店铺</div>
+          <div class="userinfo-pop-bd" @click="switching">切换店铺</div>
           <div class="userinfo-pop-ft">退出</div>
         </div>
       </div>
@@ -60,8 +60,49 @@
 </template>
 
 <script>
+import axios from '../plugins/axios'
+
 export default {
-  // middleware: 'auth'
+  data () {
+    return {
+      verification: '未验证',
+      shopId: '',
+      shopInfo: {
+        username: '',
+        imglogo: '',
+        mobile: ''
+      }
+    }
+  },
+  beforeMount () {
+    this.shopId = localStorage.getItem('shop_id')
+    this.shopInfoLoad()
+  },
+  methods: {
+    // 店铺信息加载
+    shopInfoLoad () {
+      axios.post('/seller/shop/shopDetail?shop_id=' + this.shopId).then((res) => {
+        if (res.data.error) {
+          this.$message({
+            type: 'error',
+            message: res.data.error.msg
+          })
+        } else {
+          console.log(res)
+          var url = 'http://pos.wangdoukeji.com/'
+          this.shopInfo = {
+            username: res.data.shop[0].name,
+            imglogo: url + res.data.shop[0].path.replace(/\\/, ''),
+            mobile: res.data.shop[0].service_mobile
+          }
+        }
+      })
+    },
+    // 切换店铺
+    switching () {
+      location.assign('/shop/shopList')
+    }
+  }
 }
 </script>
 
