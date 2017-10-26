@@ -46,7 +46,7 @@
 		    </div>
 		  </el-tab-pane>
 		  <el-tab-pane class="container" label="堂食点餐" name="second"></el-tab-pane>
-			<el-tab-pane class="container" label="外卖" name="third"></el-tab-pane>
+		  <el-tab-pane class="container" label="外卖" name="third"></el-tab-pane>
 	  </el-tabs>
 	</div>
 </template>
