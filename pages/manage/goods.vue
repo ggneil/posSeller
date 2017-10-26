@@ -65,6 +65,7 @@
                 <el-table-column label="操作">
                   <template scope="scope">
                     <el-button
+                      disabled
                       size="small">{{ scope.row.goodsStatus }}</el-button>
                     <el-button
                       size="small"
@@ -267,7 +268,7 @@
     methods: {
       // 搜索商品
       searchGoods (value1) {
-        axios.post('/seller/Goods/queryGoods', { key: value1 }).then((res) => {
+        axios.post('/seller/Goods/queryGoods', { key: value1, shop_id: this.shopId }).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {
@@ -354,7 +355,7 @@
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {
-            console.log(1)
+            console.log(this.shopId)
             this.groupResult = res.data.tags
             this.tableData = []
             for (var keys in this.groupResult) {
@@ -400,7 +401,7 @@
       submitForm (formName, style) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/addGoods', { img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
+            axios.post('/seller/Goods/addGoods', { shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
