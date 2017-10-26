@@ -402,7 +402,6 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             axios.post('/seller/Goods/addGoods', { shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
-            axios.post('/seller/Goods/addGoods', { img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId, shop_id: this.shopId }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {

@@ -48,12 +48,12 @@
             <div>{{shopInfo.mobile}}</div>
           </div>
           <div class="userinfo-pop-bd">账号设置</div>
-          <div class="userinfo-pop-bd" @click="switching">切换店铺</div>
-          <div class="userinfo-pop-ft">退出</div>
+          <router-link class="userinfo-pop-bd" to="/shop/shopList" tag="div">切换店铺</router-link>
+          <div class="userinfo-pop-ft" @click="logout">退出</div>
         </div>
       </div>
     </el-col>
-    <el-col :span="21" :offset="0" class="content">
+    <el-col :span="24" :offset="0" class="content">
       <nuxt/>
     </el-col>
   </el-row>
@@ -101,6 +101,10 @@ export default {
     // 切换店铺
     switching () {
       location.assign('/shop/shopList')
+    },
+    logout () {
+      location.assign('/account/login')
+      localStorage.clear()
     }
   }
 }
@@ -153,9 +157,10 @@ export default {
   }
   .el-left {
     position: fixed;
+    width: 185px;
   }
   .content {
-    padding-left: 13%;
+    padding-left: 185px;
   }
   /*个人信息*/
   .personal{
@@ -177,6 +182,10 @@ export default {
     padding-left: 10px;
   }
   .personal-name {
+    width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-weight: 700;
     margin-top: -5px;
     margin-bottom: 10px;
