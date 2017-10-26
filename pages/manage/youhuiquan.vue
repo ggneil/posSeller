@@ -8,7 +8,7 @@
               <el-button class="btn" type="primary" @click="newGoods">新建优惠券</el-button>
             </el-col>
             <el-col :span="10" :offset="11">
-              <el-select class="Inp" v-model="value" placeholder="请选择" @change="handleStatusSelect">
+              <!--<el-select class="Inp" v-model="value" placeholder="请选择" @change="handleStatusSelect">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -16,7 +16,7 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <el-input class="Inp Inp2" v-model="input" placeholder="搜索优惠券..." @change="searchGoods"></el-input>
+              <el-input class="Inp Inp2" v-model="input" placeholder="搜索优惠券..." @change="searchGoods"></el-input>-->
             </el-col>
           </el-row>
           <el-row>
@@ -202,6 +202,7 @@
                 @click="handleEdit4(scope.$index, scope.row)">设置积分</el-button>
               <el-button
                 disabled
+                :type="scope.row.integrationStatus === '积分兑换未开启' ? '' : 'primary'"
                 size="small">{{ scope.row.integrationNum + '积分' }}</el-button>
             </template>
           </el-table-column>
@@ -320,6 +321,10 @@
     methods: {
       // 搜索商品
       searchGoods1 (value) {
+        this.searchLoad(value)
+      },
+      // 搜索商品加载
+      searchLoad (value) {
         axios.post('/seller/Integral_Goods/queryGoods?shop_id=' + this.shopId + '&goods_name=' + value).then((res) => {
           if (res.data.error) {
             this.$message({
@@ -600,6 +605,8 @@
       // 修改积分
       handleEdit4 (index, row) {
         this.$prompt('请输入积分数量', '积分设置', {
+          inputPattern: /^[1-9]\d*$/,
+          inputErrorMessage: '请输入正整数',
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputPlaceholder: row.integrationNum
