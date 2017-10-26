@@ -32,9 +32,9 @@
         <i class="store-management"></i>
         店铺管理
         </el-menu-item>
-        <el-menu-item index="/manage/shopManage">
+        <el-menu-item index="/manage/youhuiquan">
           <i class="application-plug-in"></i>
-          应用插件
+          优惠券/积分
         </el-menu-item>
       </el-menu>
       <div class="acccount">
