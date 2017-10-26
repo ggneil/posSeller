@@ -94,6 +94,8 @@
                  label="操作">
                   <template scope="scope">
                     <el-button
+                      disabled
+                      :type="scope.row.couponStatus === '不可用' ? 'danger' : 'primary'"
                       size="small">{{ scope.row.couponStatus }}</el-button>
                     <el-button
                       size="small"
@@ -189,11 +191,13 @@
             <template scope="scope">
               <el-button
                 disabled
+                :type="scope.row.integrationStatus === '积分兑换未开启' ? 'danger' : 'primary'"
                 size="small">{{ scope.row.integrationStatus }}</el-button>
               <el-button
                 size="small"
                 @click="handleEdit3(scope.$index, scope.row)">{{ scope.row.integrationStatusBtn }}</el-button>
               <el-button
+                :disabled="scope.row.integrationStatus === '积分兑换未开启' ? 'disabled' : false"
                 size="small"
                 @click="handleEdit4(scope.$index, scope.row)">设置积分</el-button>
               <el-button
@@ -238,33 +242,8 @@
         // 时间段选择
         pickerOptions0: {
           disabledDate (time) {
-            return time.getTime() > Date.now()
-          },
-          shortcuts: [{
-            text: '最近一周',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          }, {
-            text: '最近一个月',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          }, {
-            text: '最近三个月',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }]
+            return time.getTime() < Date.now()
+          }
         },
         zhuangtai: '',
         zhuangtaiBtn: '',
@@ -327,11 +306,8 @@
           value: '所有状态',
           label: '所有状态'
         }, {
-          value: '未开启',
-          label: '未开启'
-        }, {
-          value: '已开启',
-          label: '已开启'
+          value: '已开启积分兑换',
+          label: '已开启积分兑换'
         }]
       }
     },
@@ -342,6 +318,99 @@
       this.goodsLoad()
     },
     methods: {
+      // 搜索商品
+      searchGoods1 (value) {
+        axios.post('/seller/Integral_Goods/queryGoods?shop_id=' + this.shopId + '&goods_name=' + value).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.value1 = '所有状态'
+            this.goodsData = []
+            goods = res.data.goods
+            for (var keys in goods) {
+              if (goods[keys].chang_status === 1) {
+                this.integrationStatus = '积分兑换已开启'
+                this.integrationStatusBtn = '关闭积分兑换'
+              } else {
+                this.integrationStatus = '积分兑换未开启'
+                this.integrationStatusBtn = '开启积分兑换'
+              }
+              if (goods[keys].integral === null || goods[keys].integral === undefined) {
+                this.integral = 0
+              } else {
+                this.integral = goods[keys].integral
+              }
+              if (goods[keys].path === null) {
+                this.ico = ''
+              } else {
+                this.ico = url + goods[keys].path.replace(/\\/, '')
+              }
+              this.goodsData.push({
+                ico: this.ico,
+                name: goods[keys].goods_name,
+                price: goods[keys].goods_price + '元',
+                integrationNum: this.integral,
+                integrationStatus: this.integrationStatus,
+                integrationStatusBtn: this.integrationStatusBtn,
+                goodsId: goods[keys].goods_id,
+                shopId: goods[keys].shop_id
+              })
+            }
+          }
+        })
+      },
+      // 积分状态查看
+      handleStatusSelect1 (label) {
+        this.input1 = ''
+        if (label === '所有状态') {
+          this.goodsLoad()
+        } else {
+          this.goodsData = []
+          axios.post('/seller/Integral_Goods/query?shop_id=' + this.shopId).then((res) => {
+            goods = res.data.goods
+            if (res.data.error) {
+              this.$message({
+                type: 'error',
+                message: res.data.error.msg
+              })
+            } else {
+              goods = res.data.integral_goods
+              for (var keys in goods) {
+                if (goods[keys].chang_status === 1) {
+                  this.integrationStatus = '积分兑换已开启'
+                  this.integrationStatusBtn = '关闭积分兑换'
+                } else {
+                  this.integrationStatus = '积分兑换未开启'
+                  this.integrationStatusBtn = '开启积分兑换'
+                }
+                if (goods[keys].integral === null || goods[keys].integral === undefined) {
+                  this.integral = 0
+                } else {
+                  this.integral = goods[keys].integral
+                }
+                if (goods[keys].path === null) {
+                  this.ico = ''
+                } else {
+                  this.ico = url + goods[keys].path.replace(/\\/, '')
+                }
+                this.goodsData.push({
+                  ico: this.ico,
+                  name: goods[keys].goods_name,
+                  price: goods[keys].goods_price + '元',
+                  integrationNum: this.integral,
+                  integrationStatus: this.integrationStatus,
+                  integrationStatusBtn: this.integrationStatusBtn,
+                  goodsId: goods[keys].goods_id,
+                  shopId: goods[keys].shop_id
+                })
+              }
+            }
+          })
+        }
+      },
       timeQuantum1 (shijian) {
         this.formAddCoupon.startTime = shijian[0]
         this.formAddCoupon.endTime = shijian[1]
@@ -358,7 +427,7 @@
             for (var keys in this.groupGoods) {
               if (this.groupGoods[keys].status === 1) {
                 console.log(1)
-                zhuangtai = '可用'
+                zhuangtai = '可使用'
                 zhuangtaiBtn = '下架'
                 this.tableData1.push({ num: this.groupGoods[keys].total_num, couponName: this.groupGoods[keys].name, denomination: this.groupGoods[keys].denomination + '元', couponId: this.groupGoods[keys].coupon_id, couponStatus: zhuangtai, couponStatusBtn: zhuangtaiBtn, startTime: timer(this.groupGoods[keys].use_start_time), endTime: timer(this.groupGoods[keys].use_end_time), xianzhi: this.groupGoods[keys].amount_limit + '元' })
               } else {
@@ -373,7 +442,7 @@
       },
       // 积分商品列表加载
       goodsLoad () {
-        axios.post('/seller/Integral_Goods/getGoodsList?shop_id=' + 1).then((res) => {
+        axios.post('/seller/Integral_Goods/getGoodsList?shop_id=' + this.shopId).then((res) => {
           if (res.data.error) {
             this.$message({
               type: 'error',
@@ -446,6 +515,8 @@
       // 顶部nav点击、打开、关闭事件
       handleClick (tab, event) {
         this.show = true
+        this.value1 = '所有状态'
+        this.input1 = ''
       },
       handleOpen (key, keyPath) {
         console.log(key, keyPath)
@@ -479,6 +550,18 @@
           })
         })
       },
+      handleEdit2 (index, row) {
+        axios.post('/seller/coupon/changStatus?coupon_id=' + row.couponId).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.pageLoad()
+          }
+        })
+      },
       handleEdit3 (index, row) {
         if (row.integrationStatusBtn === '开启积分兑换') {
           axios.post('/seller/Integral_Goods/add?goods_id=' + row.goodsId + '&integral=100').then((res) => {
@@ -508,7 +591,7 @@
                 type: 'success',
                 message: '积分兑换关闭成功'
               })
-              this.goodsData[index].integrationStatus = '积分兑换已关闭'
+              this.goodsData[index].integrationStatus = '积分兑换未开启'
               this.goodsData[index].integrationStatusBtn = '开启积分兑换'
             }
           })
