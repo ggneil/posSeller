@@ -325,7 +325,7 @@
       changeGoods (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/editGoods', { goods_id: this.goodsId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
+            axios.post('/seller/Goods/editGoods', { goods_id: this.goodsId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId, shop_id: this.shopId }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
@@ -400,7 +400,7 @@
       submitForm (formName, style) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/addGoods', { img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
+            axios.post('/seller/Goods/addGoods', { img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId, shop_id: this.shopId }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
@@ -526,7 +526,7 @@
       },
       // 删除组
       handleDelete (index, row) {
-        this.$confirm('是否删除' + row[index].fenzu + '？', '提示', {
+        this.$confirm('是否删除' + row[index].fenzu + '分组和' + row[index].fenzu + '分组下的所有商品？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

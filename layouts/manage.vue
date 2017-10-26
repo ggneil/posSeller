@@ -65,7 +65,7 @@ import axios from '../plugins/axios'
 export default {
   data () {
     return {
-      verification: '未验证',
+      verification: '已验证',
       shopId: '',
       shopInfo: {
         username: '',

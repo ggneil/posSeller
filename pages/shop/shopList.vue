@@ -50,6 +50,7 @@
             })
           } else {
             if (res.data.shop_list.length === 0) {
+              location.assign('/shop/create')
             } else {
               for (var keys in res.data.shop_list) {
                 if (res.data.shop_list[keys].status === 1) {
