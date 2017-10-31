@@ -1,7 +1,7 @@
 <template>
   <el-row class="main">
     <el-col :span="3" class="el-left">
-      <div class="personal">
+      <div class="manage-personal">
         <div class="personal-logo">
           <img :src="shopInfo.imglogo" alt="">
         </div>
@@ -40,14 +40,14 @@
       <div class="acccount">
         <div class="userinfo">
           <div class="userinfo-avatar"></div>
-          <div class="userinfo-phone">{{shopInfo.mobile}}</div>
+          <div class="userinfo-phone">{{userInfo.mobile}}</div>
         </div>
         <div class="personal-center">
           <div class="userinfo-pop-hd">
-            <div>rootuser</div>
-            <div>{{shopInfo.mobile}}</div>
+            <div>{{userInfo.nickname}}</div>
+            <div>{{userInfo.mobile}}</div>
           </div>
-          <div class="userinfo-pop-bd">账号设置</div>
+          <router-link class="userinfo-pop-bd" to="/account/personal" tag="div">账号设置</router-link>
           <router-link class="userinfo-pop-bd" to="/shop/shopList" tag="div">切换店铺</router-link>
           <div class="userinfo-pop-ft" @click="logout">退出</div>
         </div>
@@ -69,13 +69,17 @@ export default {
       shopId: '',
       shopInfo: {
         username: '',
-        imglogo: '',
+        imglogo: ''
+      },
+      userInfo: {
+        nickname: '',
         mobile: ''
       }
     }
   },
   beforeMount () {
     this.shopId = localStorage.getItem('shop_id')
+    this.userId = localStorage.getItem('user_id')
     this.shopInfoLoad()
   },
   methods: {
@@ -92,8 +96,22 @@ export default {
           var url = 'http://pos.wangdoukeji.com/'
           this.shopInfo = {
             username: res.data.shop[0].name,
-            imglogo: url + res.data.shop[0].path.replace(/\\/, ''),
-            mobile: res.data.shop[0].service_mobile
+            imglogo: url + res.data.shop[0].path.replace(/\\/, '')
+          }
+        }
+      })
+      // 个人信息
+      axios.post('/seller/User/userInfo?user_id=' + this.userId).then((res) => {
+        if (res.data.error) {
+          this.$message({
+            type: 'error',
+            message: res.data.error.msg
+          })
+        } else {
+          console.log(res)
+          this.userInfo = {
+            nickname: res.data.nickname,
+            mobile: res.data.mobile
           }
         }
       })
@@ -149,21 +167,24 @@ export default {
     border-top: 1px solid #eee;
     padding-left: 5%;
   }
+  .menu > li {
+    border-bottom: 1px solid #eee;
+  }
   .el-menu {
     border-right: none;
   }
-  .el-col{
-    height: 100%;
-  }
   .el-left {
     position: fixed;
-    width: 185px;
+    width: 180px;
+    height: 100%;
+    background-color: #fff;
+    border-right: 1px solid #eee;
   }
   .content {
     padding-left: 185px;
   }
   /*个人信息*/
-  .personal{
+  .manage-personal{
     width: 100%;
     padding: 15px 0 15px 15px;
     box-sizing: border-box;
@@ -233,9 +254,10 @@ export default {
     border-top: 1px solid #eee;
     margin: 0 15px;
     bottom: 0;
-    width: 170px;
+    width: 150px;
     background: #fff;
     cursor: pointer;
+    box-sizing: border-box;
   }
   .userinfo-avatar {
     position: absolute;
@@ -293,11 +315,11 @@ export default {
     cursor: pointer;
   }
   .userinfo-pop-bd:hover {
-    background: #38f;
+    background: #fdaa60;
     color: #fff;
   }
   .userinfo-pop-ft:hover {
-    background: #38f;
+    background: #fdaa60;
     color: #fff;
   }
 </style>

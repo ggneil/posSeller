@@ -313,8 +313,8 @@
 
 <style>
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;
-    box-shadow: none;border: 1px solid #409EFF}
-  .box-card .el-card__header{background-color: #409EFF;color: #ffffff;text-align: center}
+    box-shadow: none;border: 1px solid #fc9538}
+  .box-card .el-card__header{background-color: #fc9538;color: #ffffff;text-align: center}
 
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
@@ -324,7 +324,7 @@
     overflow: hidden;
   }
   .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
+    border-color: #feca9c;
   }
   .avatar-uploader-icon {
     font-size: 28px;

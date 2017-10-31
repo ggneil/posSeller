@@ -54,8 +54,10 @@
       }
     },
     methods: {
+
       async login () {
         let $valid = false
+        console.log(this)
         await this.$refs['loginForm'].validate((valid) => {
           if (valid) {
             $valid = valid
@@ -70,12 +72,19 @@
             })
           } catch (e) {
             this.submit_loading = false
-            this.$message.error(e.message)
           }
+          var that = this
           axios.post('/seller/user/login?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
             if (res.data.error) {
-              alert(res.data.error.msg)
+              that.$message({
+                type: 'error',
+                message: res.data.error.msg
+              })
             } else {
+              that.$message({
+                type: 'success',
+                message: '登陆成功!'
+              })
               var userId = res.data.user_id
               localStorage.setItem('user_id', userId)
               location.assign('/shop/shopList')

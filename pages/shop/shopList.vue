@@ -2,8 +2,8 @@
   <el-row :span="20" class="parent">
     <el-col class="header">
       <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508423488947&di=76353e30541ec6bcf1aa15a270886c4c&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Ffcfaaf51f3deb48fbb0bc61ff91f3a292cf57894.jpg" class="logo">
-      <el-button type="text" class="button1">返回主页</el-button>
-      <router-link class="button1" to="/shop/create" tag="div">创建店铺</router-link>
+      <router-link to="/" class="button1" tag="div">返回主页</router-link>
+      <router-link to="/shop/create" class="button1" tag="div">创建店铺</router-link>
     </el-col>
     <el-col class="smallBox" :span="6" v-for="(o, index) in shopInfo.length" :key="o" :offset="index % 3 == 0 ? 1 : 2">
       <el-card :body-style="{ padding: '0px' }">
@@ -128,7 +128,7 @@
     height: 50px;
   }
   .smallBox{
-    margin-top: 20px
+    margin-top: 20px;
   }
   .parent{
     padding: 80px 20px 20px 20px;
@@ -155,11 +155,7 @@
     float: right;
     line-height: 50px;
     font-size: 18px;
-    color: white;
-    cursor: pointer;
-  }
-  .button1:hover{
-    color: #69b3ff;
+    color: white
   }
   .image {
     width: 100%;

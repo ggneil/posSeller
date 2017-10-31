@@ -41,7 +41,7 @@ module.exports = {
   },
   // CSS 模块
   css: [
-    'element-ui/lib/theme-chalk/index.css'
+    'element-ui/lib/fc9538/index.css'
   ],
   plugins: [
     { src: '~plugins/element-ui', ssr: true }

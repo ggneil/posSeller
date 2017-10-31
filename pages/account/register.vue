@@ -70,12 +70,20 @@
             })
           } catch (e) {
             this.submit_loading = false
-            this.$message.error(e.message)
           }
+          var that = this
           axios.post('/seller/user/register?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
             if (res.data.error) {
-              alert(res.data.error.msg)
+              var error = res.data.error.msg
+              that.$message({
+                type: 'error',
+                message: error
+              })
             } else {
+              that.$message({
+                type: 'success',
+                message: '注册成功!'
+              })
               location.assign('/account/login')
             }
           })

@@ -432,7 +432,7 @@
   /*店铺信息结束*/
   .imgSize1{width:78px;height: 78px;}
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;}
-  .box-card .el-card__header{background-color: #409EFF;color: #ffffff;text-align: center}
+  /*.box-card .el-card__header{background-color: #409EFF;color: #ffffff;text-align: center}*/
 
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

@@ -294,9 +294,9 @@
 		margin-left: 10px;
 	}
 	.search{
-		background: #38f;
+		background: #fc9538;
 		color: #fff;
-		border: #38F;
+		border: #fc9538;
    height: 35px;
     line-height: 35px;
     padding: 0 15px;
