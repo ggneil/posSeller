@@ -3,20 +3,20 @@
         <el-col :xs="18" :sm="12" :md="10" :lg="8">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
-                    <h3>商家注册</h3>
+                    <h3>找回密码</h3>
                 </div>
                 <el-form :model="loginForm" :rules="rules" ref="loginForm">
                     <el-form-item prop="mobile">
                         <el-input v-model="loginForm.mobile" placeholder="手机号码"></el-input>
                     </el-form-item>
                     <el-form-item prop="password">
-                        <el-input v-model="loginForm.password" placeholder="注册密码"></el-input>
+                        <el-input v-model="loginForm.password" placeholder="设定新密码"></el-input>
                     </el-form-item>
                     <el-form-item prop="sms" class="verification-code">
                         <el-input v-model="loginForm.sms" @keyup.enter.native="login" placeholder="验证码"></el-input>
                     </el-form-item>
                     <el-form-item class="submit-box">
-                        <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">注册</el-button>
+                        <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">确认修改</el-button>
                     </el-form-item>
                     <a href="login" class="login">立即登陆</a>
                 </el-form>
@@ -72,7 +72,7 @@
       // 验证码
       send () {
         let me = this
-        axios.post('/seller/user/sms?phone=' + this.loginForm.mobile).then(function (res) {
+        axios.post('/seller/User/findSms?phone=' + this.loginForm.mobile).then(function (res) {
           if (res.data.code === 1 && me.loginForm.mobile.length === 11) {
             me.sendMsgDisabled = true
             var timer = setInterval(function () {
@@ -110,11 +110,11 @@
             this.submit_loading = false
           }
           var that = this
-          axios.post('/seller/user/register?mobile=' + this.loginForm.mobile + '&password=' + this.loginForm.password + '&verify=' + this.loginForm.sms).then(function (res) {
+          axios.post('/seller/user/retireve?mobile=' + this.loginForm.mobile + '&verify=' + this.loginForm.sms + '&new_pass=' + this.loginForm.password).then(function (res) {
             if (res.data.code === 1) {
               that.$message({
                 type: 'success',
-                message: '注册成功!'
+                message: '修改成功!'
               })
               var userId = res.data.data
               localStorage.setItem('user_id', userId)

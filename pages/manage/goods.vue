@@ -181,7 +181,7 @@
         </el-table>
       </el-tab-pane>
     </el-tabs>
-    
+
   </div>
 </template>
 
@@ -703,9 +703,6 @@
   }
 </script>
 <style>
-  .el-tabs__nav-scroll{
-    padding-left: 20px;
-  }
  /*图片上传*/
  .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
