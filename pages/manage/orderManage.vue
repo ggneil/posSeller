@@ -22,7 +22,7 @@
 							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
 							<el-table-column prop="money_number" label="金额" width="80"></el-table-column>
-							<el-table-column prop="user_name" label="用户名" width="80"></el-table-column>
+							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="120"></el-table-column>
 							<el-table-column prop="time" label="下单时间" width="180"></el-table-column>
 							<el-table-column label="操作" show-overflow-tooltip>

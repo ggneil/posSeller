@@ -58,7 +58,7 @@ module.exports = {
     session({
       secret: 'super-secret-key',
       resave: true,
-      rolling:true,
+      rolling: true,
       saveUninitialized: true,
       cookie: { maxAge: 3600000 }
     }),

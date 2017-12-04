@@ -283,7 +283,7 @@
                   for (var keys in this.groupGoods) {
                     if (this.groupGoods[keys].path === null || this.groupGoods[keys].path === undefined) {
                       url = ''
-                      this.groupGoods[keys].path = '../static/weixin.png'
+                      this.groupGoods[keys].path = '../../static/weixin.png'
                     } else {
                       url = 'http://pos.wangdoukeji.com/'
                     }
@@ -304,7 +304,7 @@
               for (var keys in this.groupGoods) {
                 if (this.groupGoods[keys].path === null || this.groupGoods[keys].path === undefined) {
                   url = ''
-                  this.groupGoods[keys].path = '../static/weixin.png'
+                  this.groupGoods[keys].path = '../../static/weixin.png'
                 } else {
                   url = 'http://pos.wangdoukeji.com/'
                 }
@@ -430,7 +430,7 @@
       handleClick (tab, event) {
         this.show = true
       },
-      // 状态查看 
+      // 状态查看
       handleStatusSelect (value) {
         this.input = ''
         axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: this.navId }).then((res) => {

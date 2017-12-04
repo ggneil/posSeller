@@ -16,8 +16,8 @@
             <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">登录</el-button>
           </el-form-item>
           <div class="tiao">
-            <a href="register" class="register">立即注册</a>
-            <a href="retrieve" class="retrieve">找回密码</a>
+            <a href="/account/register" class="register">立即注册</a>
+            <a href="/account/retrieve" class="retrieve">找回密码</a>
           </div>
         </el-form>
       </el-card>

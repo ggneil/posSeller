@@ -78,7 +78,7 @@
       // 进入店铺函数
       open1 (shopId) {
         localStorage.setItem('shop_id', shopId)
-        location.href = '../manage/goods'
+        location.href = '/manage/goods'
       },
       // 删除操作函数
       open2 (shopId, index) {
