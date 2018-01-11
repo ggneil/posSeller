@@ -3,9 +3,9 @@
 	  <el-tabs v-model="activeName">
 		  <el-tab-pane class="container" label="扫码买单" name="first">
 		  	<el-input class="frinp" v-model="hao" placeholder="收货人姓名、电话或订单号"></el-input>
-		    <el-date-picker class="time1" v-model="value1" type="datetime" placeholder="选择日期时间" @change="timeCheck1" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
+		    <el-date-picker class="time1" v-model="value1" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" @change="timeCheck1" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
 		    <span class="zhi">至</span>
-		    <el-date-picker class="time2" v-model="value2" type="datetime" placeholder="选择日期时间" @change="timeCheck2" align="right" :editable="false"></el-date-picker>
+		    <el-date-picker class="time2" v-model="value2" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" @change="timeCheck2" align="right" :editable="false"></el-date-picker>
 		    <div class="btn_div">
 		    	<el-button class="search" @click="handleSearch">搜索</el-button>
 		    	<el-button class="reset" @click="handleReset">重置</el-button>
@@ -48,9 +48,9 @@
 		  </el-tab-pane>
 		  <el-tab-pane class="container" label="堂食点餐" name="second">
         <el-input class="frinp" v-model="hao" placeholder="收货人姓名、电话或订单号"></el-input>
-		    <el-date-picker class="time1" v-model="value1" type="datetime" placeholder="选择日期时间" @change="timeCheck11" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
+		    <el-date-picker class="time1" value-format="yyyy-MM-dd HH:mm:ss" v-model="value1" type="datetime" placeholder="选择日期时间" @change="timeCheck11" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
 		    <span class="zhi">至</span>
-		    <el-date-picker class="time2" v-model="value2" type="datetime" placeholder="选择日期时间" @change="timeCheck3" align="right" :editable="false"></el-date-picker>
+		    <el-date-picker class="time2" v-model="value2" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" @change="timeCheck3" align="right" :editable="false"></el-date-picker>
 		    <div class="btn_div">
 		    	<el-button class="search" @click="handleSearch1">搜索</el-button>
 		    	<el-button class="reset" @click="handleReset1">重置</el-button>
@@ -94,9 +94,9 @@
       </el-tab-pane>
 		  <el-tab-pane class="container" label="外卖" name="third">
         <el-input class="frinp" v-model="hao" placeholder="收货人姓名、电话或订单号"></el-input>
-		    <el-date-picker class="time1" v-model="value1" type="datetime" placeholder="选择日期时间" @change="timeCheck12" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
+		    <el-date-picker class="time1" v-model="value1" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" @change="timeCheck12" align="right" :picker-options="pickerOptions1" :editable="false"></el-date-picker>
 		    <span class="zhi">至</span>
-		    <el-date-picker class="time2" v-model="value2" type="datetime" placeholder="选择日期时间" @change="timeCheck4" align="right" :editable="false"></el-date-picker>
+		    <el-date-picker class="time2" v-model="value2" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" @change="timeCheck4" align="right" :editable="false"></el-date-picker>
 		    <div class="btn_div">
 		    	<el-button class="search" @click="handleSearch2">搜索</el-button>
 		    	<el-button class="reset" @click="handleReset2">重置</el-button>
@@ -310,7 +310,7 @@ export default {
     // 时间筛选
     timeCheck1 (canshu) {
       this.value3 = canshu
-      console.log(this.value3)
+      console.log(this.value1)
       if (this.orderStatus === '全部') {
         this.orderLoad('/seller/Order/all?shop_id=' + this.shopId + '&time_from=' + this.value3 + '&time_to=' + this.value4 + '&type=0')
         this.orderRemoveBtn = false
@@ -324,7 +324,6 @@ export default {
     },
     timeCheck11 (canshu) {
       this.value3 = canshu
-      console.log(this.value3)
       if (this.orderStatus1 === '全部') {
         this.orderLoad1('/seller/Order/all?shop_id=' + this.shopId + '&time_from=' + this.value3 + '&time_to=' + this.value4 + '&type=1')
         this.orderRemoveBtn1 = false

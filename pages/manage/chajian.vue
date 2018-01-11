@@ -3,7 +3,7 @@
     <el-tabs v-model="activeName">
       <el-tab-pane label="应用插件" name="first">
         <el-row class="henglan">
-          <nuxt-link @click="xianshi = false" v-for="item in option" :key="item.id" :to="item.status === 1 ? '/manage/' + item.name_pinyin + '?plugin_id=' +item.id : ''">
+          <nuxt-link @click="xianshi = false" v-for="item in option" :key="item.id" :to="item.status === 1 ? '/manage/' + (item.name_pinyin === 'zhuoweiguanli' ? 'shopManage' : item.name_pinyin) + '?plugin_id=' + item.id + (item.name_pinyin === 'zhuoweiguanli' ? '&id=2' : '') : ''">
             <el-col :class="[(item.status === 1) ? 'options' : 'options2', (item.id-3) > 0 ? 'options1' : '']" :span="7" :offset="item.id%3 === 1 ? 0 : 1">
               <el-row>
                 <el-col :span="4">
