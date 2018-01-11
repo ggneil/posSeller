@@ -1,7 +1,7 @@
 <template>
   <el-row :span="20" class="parent">
     <el-col class="header">
-      <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1508423488947&di=76353e30541ec6bcf1aa15a270886c4c&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Ffcfaaf51f3deb48fbb0bc61ff91f3a292cf57894.jpg" class="logo">
+      <img src="~static/images/logo1.png" class="logo">
       <router-link to="/" class="button1" tag="div">返回主页</router-link>
       <router-link to="/shop/create" class="button1" tag="div">创建店铺</router-link>
     </el-col>
@@ -25,7 +25,7 @@
 
 <script>
   import axios from '../../plugins/axios'
-  var url = 'http://pos.wangdoukeji.com/'
+  var url = 'https://cdn.wangdoukeji.com/'
   export default {
     // middleware: 'auth', // 中间件登陆之后才可以看到
     data () {
@@ -78,7 +78,7 @@
       // 进入店铺函数
       open1 (shopId) {
         localStorage.setItem('shop_id', shopId)
-        location.href = '/manage/goods'
+        location.href = '/manage/worker'
       },
       // 删除操作函数
       open2 (shopId, index) {
@@ -116,7 +116,7 @@
 <style>
   .header{
     height: 70px;
-    padding: 10px 40px;
+    padding: 20px 40px;
     background-color: #fc9538;
     box-shadow: 0 10px 10px -10px rgba(0, 0, 0, .3);
     position: fixed;
@@ -125,7 +125,7 @@
     width: 100%
   }
   .logo{
-    height: 50px;
+    height: 30px;
   }
   .smallBox{
     margin-top: 20px;
@@ -151,11 +151,12 @@
   }
   .button1{
     padding: 0;
-    margin-right: 20px;
+    margin-right: 30px;
     float: right;
-    line-height: 50px;
-    font-size: 18px;
-    color: white
+    line-height: 30px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
   }
   .image {
     width: 100%;
@@ -168,7 +169,9 @@
       display: table;
       content: "";
   }
-  
+  .el-card__body>div:nth-child(2) {
+    background-color: #eee;
+  }
   .clearfix:after {
       clear: both
   }

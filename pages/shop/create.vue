@@ -15,7 +15,7 @@
           <el-form-item label="店铺LOGO">
             <el-upload
               class="avatar-uploader"
-              action="http://pos.wangdoukeji.com/api/Attachment/upload"
+              action="https://cdn.wangdoukeji.com/api/Attachment/upload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload">
@@ -259,6 +259,10 @@
       handleAvatarSuccess (res, file) {
         this.logoUrl = URL.createObjectURL(file.raw)
         this.shopInfo.imgId = res.id
+        this.$message({
+          type: 'success',
+          message: '图片上传成功'
+        })
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
@@ -271,7 +275,7 @@
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
-        return isJPG && isLt2M
+        return (isJPG || isPNG) && isLt2M
       },
       handleCheckAllChange (value) {
         this.shopInfo.checkedDay = value ? dayOptions : []
@@ -311,7 +315,7 @@
   }
 </script>
 
-<style>
+<style scopedSlots>
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;
     box-shadow: none;border: 1px solid #fc9538}
   .box-card .el-card__header{background-color: #fc9538;color: #ffffff;text-align: center}

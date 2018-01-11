@@ -10,12 +10,27 @@
             {{shopInfo.username}}
           </div>
           <div class="authentication">
-            <span class="verification">{{verification}}</span>
+            <el-popover
+              ref="popover5"
+              placement="top"
+              width="160"
+              v-model="visible2">
+              <p>您的店铺{{verification === '已认证' ? '已认证' : '尚未认证'}}</p>
+              <div style="text-align: right; margin: 0">
+                <el-button type="primary" v-if="verification === '已认证'" size="mini" @click="dianpuxinxi">查看资料</el-button>
+                <el-button type="primary" v-if="verification === '未认证'" size="mini" @click="renzheng">去认证</el-button>
+              </div>
+            </el-popover>
+            <span v-popover:popover5 class="verification" style="outline: none;cursor: pointer;" :style="verification === '已认证' ? 'background-color: #f85;' : 'background-color: #ccc;'">{{verification}}</span>
             <span class="restaurant">豆点餐饮</span>
           </div>
         </div>
       </div>
       <el-menu mode="vertical" default-active="1" class="menu" :router="true">
+        <el-menu-item index="/manage/worker">
+          <i class="shop-worker"></i>
+          工作台
+        </el-menu-item>
         <el-menu-item index="/manage/goods">
           <i class="shop-administration"></i>
           商品管理
@@ -32,10 +47,14 @@
         <i class="store-management"></i>
         店铺管理
         </el-menu-item>
-        <el-menu-item index="/manage/youhuiquan">
+        <el-menu-item index="/manage/chajian">
           <i class="application-plug-in"></i>
-          优惠券/积分
+          应用插件
         </el-menu-item>
+        <!-- <el-menu-item index="/manage/yindao">
+          <i class="application-person"></i>
+          功能指引
+        </el-menu-item> -->
       </el-menu>
       <div class="acccount">
         <div class="userinfo">
@@ -65,8 +84,11 @@ import axios from '../plugins/axios'
 export default {
   data () {
     return {
-      verification: '已验证',
+      verification: '',
+      // yindaoCode: 0,
+      visible2: false,
       shopId: '',
+      shopStatusCode: 1,
       shopInfo: {
         username: '',
         imglogo: ''
@@ -81,6 +103,16 @@ export default {
     this.shopId = localStorage.getItem('shop_id')
     this.userId = localStorage.getItem('user_id')
     this.shopInfoLoad()
+    // 获取店铺状态
+    axios.get('https://cdn.wangdoukeji.com/index.php/seller/shop/getIndexStatus?shop_id=' + localStorage.getItem('shop_id')).then((res) => {
+      if (res.data.data.shop_auth_status === 1) {
+        this.verification = '已认证'
+        this.shopStatusCode = 1
+      } else {
+        this.verification = '未认证'
+        this.shopStatusCode = 0
+      }
+    })
   },
   methods: {
     // 店铺信息加载
@@ -123,6 +155,14 @@ export default {
     logout () {
       location.assign('/account/login')
       localStorage.clear()
+    },
+    renzheng () {
+      this.visible2 = false
+      this.$router.push({path: '/manage/renzheng'})
+    },
+    dianpuxinxi () {
+      this.visible2 = false
+      this.$router.push({path: '/manage/shopManage'})
     }
   }
 }
@@ -232,6 +272,9 @@ export default {
     height: 24px;
     padding-right: 7px;
   }
+  .shop-worker {
+    background: url("../static/icon.png") 0 0 no-repeat;
+  }
   .shop-administration {
     background: url("../static/icon.png") 0 -24px no-repeat;
   }
@@ -246,6 +289,13 @@ export default {
   }
   .application-plug-in {
     background: url("../static/icon.png") 0 -168px no-repeat;
+  }
+  .application-person{background: url("../static/icon.png") 0 -96px no-repeat;}
+  .application-plug {
+    background: url("../static/icon.png") 0 -144px no-repeat;
+  }
+  .chajian {
+    background: url("../static/icon.png") 0 -192px no-repeat;
   }
   /*用户信息*/
   .userinfo {

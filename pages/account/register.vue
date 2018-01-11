@@ -1,5 +1,5 @@
 <template>
-    <el-row type="flex" justify="center">
+    <el-row class="loginBg" type="flex" justify="center">
         <el-col :xs="18" :sm="12" :md="10" :lg="8">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -10,7 +10,7 @@
                         <el-input v-model="loginForm.mobile" placeholder="手机号码"></el-input>
                     </el-form-item>
                     <el-form-item prop="password">
-                        <el-input v-model="loginForm.password" placeholder="注册密码"></el-input>
+                        <el-input v-model="loginForm.password" type="password" placeholder="注册密码"></el-input>
                     </el-form-item>
                     <el-form-item prop="sms" class="verification-code">
                         <el-input v-model="loginForm.sms" @keyup.enter.native="login" placeholder="验证码"></el-input>
@@ -18,11 +18,11 @@
                     <el-form-item class="submit-box">
                         <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">注册</el-button>
                     </el-form-item>
-                    <a href="login" class="login">立即登陆</a>
+                    <a href="/account/login" class="login">立即登陆</a>
                 </el-form>
                 <div class="verification-btn">
                     <button v-if="sendMsgDisabled" disabled class="jin">{{time+'秒后获取'}}</button>
-                    <button v-if="!sendMsgDisabled"  @click="send">获取验证码</button>
+                    <button v-if="!sendMsgDisabled" style="cursor: pointer;" @click="send">获取验证码</button>
                 </div>
             </el-card>
         </el-col>
@@ -134,8 +134,10 @@
 
 <style>
     body{}
-    .box-card{margin-top: 80px;position: relative}
+    .loginBg{background: url('~static/images/banner.jpg') no-repeat;position: absolute;top: 0;bottom: 0;left: 0;right: 0;background-size: 100% 100%;}
+    .box-card{position: relative;margin-top: 150px;background-color: rgba(255, 255, 255, 0.4)}
     .submit-btn{width: 100%}
+    .el-input__inner{background-color: rgba(255, 255, 255, 0.6)}
     @media (max-width: 768px){
         .el-col-xs-18 .el-card{
             border: none;
@@ -180,7 +182,11 @@
         text-decoration: none;
         display: block;
         text-align: right;
-        color: #6e6e6e;
+        color: black;
+        cursor: pointer;
+    }
+    .login:hover{
+      color: #fc9538;
     }
     /*验证码*/
     .verification-code {
@@ -200,6 +206,8 @@
         width: 100%;
         display: inline-block;
         height: 40px;
+        margin-top:2px;
+        border-radius: 4px;
         border: none;
         color: #fff;
         background-color: #fc9538;

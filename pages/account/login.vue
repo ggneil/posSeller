@@ -1,5 +1,5 @@
 <template>
-  <el-row type="flex" justify="center">
+  <el-row class="loginBg" type="flex" justify="center">
     <el-col :xs="18" :sm="12" :md="10" :lg="8">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -10,7 +10,7 @@
             <el-input v-model="loginForm.mobile" placeholder="手机号码"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginForm.password" @keyup.enter.native="login" placeholder="登录密码"></el-input>
+            <el-input v-model="loginForm.password" type="password" @keyup.enter.native="login" placeholder="登录密码"></el-input>
           </el-form-item>
           <el-form-item class="submit-box">
             <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">登录</el-button>
@@ -77,12 +77,13 @@
             this.submit_loading = false
           }
           var that = this
-          axios.post('/seller/user/login?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
+          axios.post('https://cdn.wangdoukeji.com/seller/user/login?mobile=' + this.loginForm.mobile + '&&password=' + this.loginForm.password).then(function (res) {
             if (res.data.error) {
               that.$message({
                 type: 'error',
                 message: res.data.error.msg
               })
+              this.submit_loading = true
             } else {
               that.$message({
                 type: 'success',
@@ -100,9 +101,10 @@
 </script>
 
 <style>
-  body{}
-  .box-card{margin-top: 80px}
+  .loginBg{background: url('~static/images/banner.jpg') no-repeat;position: absolute;top: 0;bottom: 0;left: 0;right: 0;background-size: 100% 100%;}
+  .box-card{margin-top: 150px;background-color: rgba(255, 255, 255, 0.4)}
   .submit-btn{width: 100%}
+  .el-input__inner{background-color: rgba(255, 255, 255, 0.6)}
   @media (max-width: 768px){
     .el-col-xs-18 .el-card{
       border: none;
@@ -116,12 +118,15 @@
     text-decoration: none;
     display: inline-block;
     float: right;
-    color: #6e6e6e;
+    color: black;
   }
   .retrieve {
     text-decoration: none;
     display: inline-block;
     float: left;
-    color: #6e6e6e;
+    color: black;
+  }
+  .retrieve:hover,.register:hover{
+    color: #fc9538;
   }
 </style>

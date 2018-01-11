@@ -40,7 +40,7 @@
                   style="width:33%;">
                   <template scope="scope">
                     <el-row>
-                      <el-col :span="4">
+                      <el-col :span="4" style="padding-left: 10px;">
                         <img class="imgSize" :src="scope.row.ico"/>
                       </el-col>
                       <el-col :span="20">
@@ -66,7 +66,7 @@
                   <template scope="scope">
                     <el-button
                       disabled
-                      size="small">{{ scope.row.goodsStatus }}</el-button>
+                      size="small" :type="scope.row.goodsStatus === '已上架' ? 'primary' : 'danger'">{{ scope.row.goodsStatus }}</el-button>
                     <el-button
                       size="small"
                       @click="handleEdit2(scope.$index, scope.row)">{{ scope.row.goodsStatusBtn }}</el-button>
@@ -93,7 +93,7 @@
               <el-form-item label="图片：">
                 <el-upload
                   class="avatar-uploader"
-                  action="http://pos.wangdoukeji.com/api/Attachment/upload"
+                  action="https://cdn.wangdoukeji.com/api/Attachment/upload"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
@@ -189,7 +189,7 @@
   import axios from '../../plugins/axios'
   var zhuangtai = ''
   var zhuangtaiBtn = ''
-  var url = 'http://pos.wangdoukeji.com/'
+  var url = 'https://cdn.wangdoukeji.com/'
   export default {
     layout: 'manage',
     data () {
@@ -211,6 +211,7 @@
         zhuangtaiBtn: '',
         shopId: '',
         input: '',
+        tagId: 1,
         imgId: 0,
         groupId: '',
         navId: '',
@@ -264,6 +265,9 @@
       this.shopId = localStorage.getItem('shop_id')
       // 页面加载请求
       this.pageLoad()
+      if (this.$route.query.id) {
+        this.newGoods()
+      }
     },
     methods: {
       // 搜索商品
@@ -285,7 +289,7 @@
                       url = ''
                       this.groupGoods[keys].path = '../../static/weixin.png'
                     } else {
-                      url = 'http://pos.wangdoukeji.com/'
+                      url = 'https://cdn.wangdoukeji.com/'
                     }
                     if (this.groupGoods[keys].status === 1) {
                       zhuangtai = '已上架'
@@ -306,7 +310,7 @@
                   url = ''
                   this.groupGoods[keys].path = '../../static/weixin.png'
                 } else {
-                  url = 'http://pos.wangdoukeji.com/'
+                  url = 'https://cdn.wangdoukeji.com/'
                 }
                 if (this.groupGoods[keys].status === 1) {
                   zhuangtai = '已上架'
@@ -326,7 +330,7 @@
       changeGoods (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/editGoods', { goods_id: this.goodsId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId, shop_id: this.shopId }).then((res) => {
+            axios.post('/seller/Goods/editGoods?goods_id=' + this.goodsId + '&img_id=' + this.imgId + '&goods_name=' + this.formAddGoods.name + '&goods_description=' + this.formAddGoods.description + '&goods_price=' + this.formAddGoods.price + '&box_price=' + this.formAddGoods.boxPrice + '&stock=' + this.formAddGoods.num + '&tag_id=' + this.tagId + '&shop_id=' + this.shopId).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
@@ -339,7 +343,7 @@
                 this.imageUrl = ''
                 this.imgId = 0
                 this.hide = false
-                this.show = false
+                this.show = true
               }
             })
             console.log('成功')
@@ -374,7 +378,7 @@
                     url = ''
                     this.groupGoods[keys].path = '../../static/weixin.png'
                   } else {
-                    url = 'http://pos.wangdoukeji.com/'
+                    url = 'https://cdn.wangdoukeji.com/'
                   }
                   if (this.groupGoods[keys].status === 1) {
                     console.log(1)
@@ -445,7 +449,7 @@
                   url = ''
                   this.groupGoods[keys].path = '../../static/weixin.png'
                 } else {
-                  url = 'http://pos.wangdoukeji.com/'
+                  url = 'https://cdn.wangdoukeji.com/'
                 }
                 if (this.groupGoods[keys].status === 1) {
                   zhuangtai = '已上架'
@@ -463,7 +467,7 @@
                   url = ''
                   this.groupGoods[keys1].path = '../../static/weixin.png'
                 } else {
-                  url = 'http://pos.wangdoukeji.com/'
+                  url = 'https://cdn.wangdoukeji.com/'
                 }
                 if (this.groupGoods[keys1].status === 1) {
                   zhuangtai = '已上架'
@@ -477,7 +481,7 @@
                   url = ''
                   this.groupGoods[keys2].path = '../../static/weixin.png'
                 } else {
-                  url = 'http://pos.wangdoukeji.com/'
+                  url = 'https://cdn.wangdoukeji.com/'
                 }
                 if (this.groupGoods[keys2].status === 0) {
                   zhuangtai = '已下架'
@@ -505,7 +509,7 @@
                 url = ''
                 this.groupGoods[keys].path = '../../static/weixin.png'
               } else {
-                url = 'http://pos.wangdoukeji.com/'
+                url = 'https://cdn.wangdoukeji.com/'
               }
               if (this.groupGoods[keys].status === 1) {
                 zhuangtai = '已上架'
@@ -596,15 +600,17 @@
             this.handleShow()
             console.log(res.data.good)
             this.formAddGoods.group = []
+            this.tagId = res.data.good.tag_id
             this.formAddGoods.name = res.data.good.goods_name
             this.formAddGoods.description = res.data.good.goods_description
             this.formAddGoods.price = res.data.good.goods_price
             this.formAddGoods.boxPrice = res.data.good.box_price
             this.formAddGoods.num = res.data.good.stock
             this.formAddGoods.group.push(res.data.good.tag_id)
-            this.formAddGoods.imgId = res.data.good.image_id
+            this.formAddGoods.imgId = res.data.good.img_id
+            this.imgId = res.data.good.img_id
             this.goodsId = res.data.good.goods_id
-            this.imageUrl = 'http://pos.wangdoukeji.com/' + res.data.good.path.replace(/\\/, '')
+            this.imageUrl = 'https://cdn.wangdoukeji.com/' + res.data.good.path.replace(/\\/, '')
             this.hide = true
           }
         })
@@ -670,14 +676,16 @@
       },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
+        const isPNG = file.type === 'image/png'
         const isLt2M = file.size / 1024 / 1024 < 2
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!')
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
-        return isJPG && isLt2M
+        console.log(1)
+        return (isJPG || isPNG) && isLt2M
       },
       // 新建商品
       newGoods () {

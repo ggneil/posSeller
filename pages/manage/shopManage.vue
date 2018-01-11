@@ -32,11 +32,18 @@
             <el-col :span="21">{{shopInfo.area + " " + shopInfo.address}}</el-col>
           </el-row>
           <el-row class="navBody">
-            <el-col :span="2" offset="1"><el-button @click="pageShow" type="primary">修改信息</el-button></el-col>
+            <el-col :span="2" offset="1"><el-button size="small" @click="pageShow" type="primary">修改信息</el-button></el-col>
           </el-row>
         </div>
-        <el-row class="navTitle">联系人信息</el-row>
-        <el-row class="navTitle">认证信息</el-row>
+        <el-row class="navTitle">
+          <p>联系电话</p>
+          <p class="pl">18943541649</p>
+        </el-row>
+        <el-row class="navTitle">
+          <p>认证信息</p>
+          <p class="pl">{{ shopStatus }}</p>
+          <el-button class="pl" :disabled="shopStatusBtn" @click="shengqingrenzheng" type="primary" size="small">{{ shopStatusBtn ? '已认证' : '申请认证' }}</el-button>
+        </el-row>
       </div>
       <el-row type="flex" justify="center" v-show="changeInfo">
         <el-col :xs="22" :sm="18" :md="16" :lg="12">
@@ -53,7 +60,7 @@
               <el-form-item label="店铺LOGO">
                 <el-upload
                   class="avatar-uploader"
-                  action="http://pos.wangdoukeji.com/api/Attachment/upload"
+                  action="https://cdn.wangdoukeji.com/api/Attachment/upload"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
@@ -179,7 +186,154 @@
         </el-col>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="商品分析" name="second">
+    <el-tab-pane label="桌台管理" name="second">
+      <div v-if="zhuowei">
+        <el-row>
+          <el-col style="padding-bottom: 10px;padding-left: 30px;padding-top: 10px;"><el-button type="primary" size="small" @click="buildzhuotai">添加桌位</el-button><el-button @click="zhuowei = !zhuowei" size="small">类型管理</el-button></el-col>
+        </el-row>
+        <el-table
+          :data="zhuotaiInfo"
+          border
+          style="width: 100%">
+          <el-table-column
+            label="桌位类型">
+            <template scope="scope">
+              <el-row>
+                <el-col>
+                 {{ scope.row.name }}({{ scope.row.min }} - {{ scope.row.max }})
+                </el-col> 
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="桌号">
+            <template scope="scope">
+              <el-row>
+                {{ scope.row.table_id }}
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column label="编辑">
+            <template scope="scope">
+              <el-button
+                size="small"
+                @click="editzhuotai(scope.$index, scope.row)">编辑</el-button>
+              <a style="color:white;text-decoration:none;margin:0 10px;" :href="scope.row.mpc_path.replace(/\\/, '')" :download="scope.row.table_id + '桌台码'">
+                <el-button
+                  size="small"
+                  type="primary"
+                  >生成小程序码</el-button></a>
+              <el-button
+                size="small"
+                type="danger"
+                @click="shanchuzhuotai(scope.$index, scope.row)"
+                >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div v-if="!zhuowei">
+        <el-row>
+          <el-col style="padding-bottom: 10px;padding-left: 30px;padding-top: 10px;"><el-button @click="zhuowei = !zhuowei" size="small">桌位管理</el-button><el-button @click="build" type="primary" size="small">添加类型</el-button></el-col>
+        </el-row>
+        <el-table
+          :data="zhuotaiGroupInfo"
+          border
+          style="width: 100%">
+          <el-table-column
+            label="桌位类型">
+            <template scope="scope">
+              <el-row>
+                <el-col>
+                  {{ scope.row.name }}({{ scope.row.min }} - {{ scope.row.max }})
+                </el-col> 
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column label="编辑">
+            <template scope="scope">
+              <el-button
+                size="small"
+                @click="editFenzu(scope.$index, scope.row)">编辑</el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click="shanchuFenzu(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <el-dialog
+        title="类型信息"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <el-form :model="zhuotaiGroupInfoEdit" ref="zhuotaiGroupInfoEdit">
+          <el-form-item
+            prop="name"
+            :rules="[
+              { required: true, message: '类型不能为空', trigger: 'blur' },
+              { max: 8, message: '最多八位', trigger: 'blur' }
+            ]"
+          >
+            <el-input v-model="zhuotaiGroupInfoEdit.name" placeholder="类型名称（1-8）"></el-input>
+          </el-form-item>
+          <el-form-item
+            prop="min"
+            :rules="[
+              { required: true, message: '最小值不能为空（最多2位）', trigger: 'blur' }
+            ]"
+          >
+            <el-input type="number" v-model="zhuotaiGroupInfoEdit.min" placeholder="最少可坐人数（1-2位数字）"></el-input>
+          </el-form-item>
+          <el-form-item
+            prop="max"
+            :rules="[
+              { required: true, message: '最大值不能为空（最多2位）', trigger: 'blur' }
+            ]"
+          >
+            <el-input type="number" v-model="zhuotaiGroupInfoEdit.max" placeholder="最多可坐人数（1-2位数字）"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="xiugaiGroup === 1 ? saveleixing(zhuotaiGroupInfoEdit.tag_id, 'zhuotaiGroupInfoEdit') : buildleixing(zhuotaiGroupInfoEdit.tag_id, 'zhuotaiGroupInfoEdit')">保 存</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+        title="类型信息"
+        :visible.sync="tianjiazhuotai"
+        width="30%">
+        <el-form :model="zhuotaiInfoEdit" ref="zhuotaiInfoEdit">
+          <el-form-item
+            prop="tag_id"
+            :rules="[
+              { required: true, message: '类型不能为空', trigger: 'blur' }
+            ]"
+          >
+            <el-select v-model="zhuotaiInfoEdit.tag_id" placeholder="请选择">
+              <el-option
+                v-for="item in zhuotaiGroupInfo"
+                :key="item.tag_id"
+                :label="item.name + '(' + item.min + '-' + item.max + ')'"
+                :value="item.tag_id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            prop="table_id"
+            :rules="[
+              { required: true, message: '桌号不能为空', trigger: 'blur' },
+              { max: 8, message: '最多八位', trigger: 'blur' }
+            ]"
+          >
+            <el-input v-model="zhuotaiInfoEdit.table_id" placeholder="桌号名称（1-8位）"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="tianjiazhuotai = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="xiugaizhuotai === 1 ? zhuotaisaveleixing(zhuotaiInfoEdit.tag_id, 'zhuotaiInfoEdit') : zhuotaibuildleixing(zhuotaiInfoEdit.tag_id, 'zhuotaiInfoEdit')">保 存</el-button>
+        </span>
+      </el-dialog>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -202,9 +356,28 @@
         }
       }
       return {
+        xiugaiGroup: 1,
+        dialogVisible: false,
+        tianjiazhuotai: false,
+        renzheng: false,
         activeName: 'first', // 默认加载店铺信息
         shopId: 1,
         userId: 1,
+        shopStatus: '未认证',
+        shopStatusBtn: false,
+        zhuowei: true,
+        zhuotaiInfo: [],
+        zhuotaiInfoEdit: {
+          table_id: '',
+          tag_id: ''
+        },
+        zhuotaiGroupInfo: [],
+        zhuotaiGroupInfoEdit: {
+          name: '',
+          min: '',
+          max: '',
+          tag_id: ''
+        },
         shopInfo: {
           name: '',
           checkedDay: dayOptions,
@@ -238,13 +411,21 @@
         rules: {
           mobile: [{ validator: validateMobile, required: true, trigger: 'blur' }],
           cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'change' }]
-        }
+        },
+        zhuotai: [1, 4, 1, 3]
       }
     },
     beforeMount () {
       this.shopId = localStorage.getItem('shop_id')
+      // this.shopId = 1
       // this.userId = localStorage.getItem('user_id')
+      if (this.$route.query.id) {
+        this.activeName = 'second'
+      }
       this.shopInfoLoad()
+      this.zhuotaiInfoLoad()
+      this.zhuotaiGroupInfoLoad()
+      console.log(this.zhuotaiGroupInfo)
       axios.post('/seller/shop/getaddress', { id: 0 }).then((res) => {
         for (var keys in res.data.address) {
           this.province.push({
@@ -256,6 +437,149 @@
       })
     },
     methods: {
+      // 新建类型
+      build () {
+        this.xiugaiGroup = 0
+        this.zhuotaiGroupInfoEdit.name = ''
+        this.zhuotaiGroupInfoEdit.min = ''
+        this.zhuotaiGroupInfoEdit.max = ''
+        this.zhuotaiGroupInfoEdit.tag_id = ''
+        this.dialogVisible = true
+      },
+      // 新建类型
+      buildzhuotai () {
+        this.xiugaizhuotai = 0
+        this.zhuotaiInfoEdit.table_id = ''
+        this.zhuotaiInfoEdit.tag_id = ''
+        this.tianjiazhuotai = true
+      },
+      // 保存类型
+      saveleixing (tagid, formName) {
+        var that = this
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.dialogVisible = false
+            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/editTag?tag_id=' + tagid + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
+              if (res.data.code === 1) {
+                that.$message({
+                  type: 'success',
+                  message: '修改成功'
+                })
+                that.zhuotaiGroupInfoLoad()
+              } else {
+                that.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 编辑桌台
+      zhuotaisaveleixing (tagid, formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.tianjiazhuotai = false
+            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/editTable?id=' + this.zhuotaiInfoEdit.id + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功'
+                })
+                this.zhuotaiInfoLoad()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 新建类型
+      buildleixing (tagid, formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.dialogVisible = false
+            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/addTag?shop_id=' + this.shopId + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '新建成功'
+                })
+                this.zhuotaiGroupInfoLoad()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 新建类型
+      zhuotaibuildleixing (tagid, formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.tianjiazhuotai = false
+            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/addTable?shop_id=' + this.shopId + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '新建成功'
+                })
+                this.zhuotaiInfoLoad()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 桌台类型信息
+      zhuotaiGroupInfoLoad () {
+        axios.get('https://cdn.wangdoukeji.com/index.php/seller/table/tagsList?shop_id=' + this.shopId).then((res) => {
+          if (res.data.code === 1) {
+            this.zhuotaiGroupInfo = res.data.data
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+          }
+        })
+      },
+      // 桌台信息
+      zhuotaiInfoLoad () {
+        axios.get('https://cdn.wangdoukeji.com/index.php/seller/table/tableList?shop_id=' + this.shopId).then((res) => {
+          if (res.data.code === 1) {
+            this.zhuotaiInfo = res.data.data
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+          }
+        })
+      },
       // 添加时段
       addTime () {
         this.addIndex += 1
@@ -293,7 +617,13 @@
               message: res.data.error.msg
             })
           } else {
-            var url = 'http://pos.wangdoukeji.com/'
+            if (res.data.shop[0].auth_status === 1) {
+              this.shopStatus = '已认证'
+              this.shopStatusBtn = true
+            }
+            var url = 'https://cdn.wangdoukeji.com/'
+            localStorage.setItem('shopName', res.data.shop[0].name)
+            localStorage.setItem('phone', res.data.shop[0].service_mobile)
             this.shopInfo = {
               name: res.data.shop[0].name,
               checkedDay: res.data.shop_time[0].week.split(','),
@@ -350,7 +680,7 @@
               } else {
                 this.$message({
                   type: 'success',
-                  message: '创建店铺成功'
+                  message: '修改信息成功'
                 })
                 location.href = '/manage/shopManage'
               }
@@ -419,6 +749,73 @@
             }
           })
         }
+      },
+      shengqingrenzheng () {
+        this.$router.push({path: '/manage/renzheng'})
+      },
+      editFenzu (i, row) {
+        this.xiugaiGroup = 1
+        this.dialogVisible = true
+        this.zhuotaiGroupInfoEdit = row
+      },
+      editzhuotai (i, row) {
+        this.xiugaizhuotai = 1
+        this.tianjiazhuotai = true
+        this.zhuotaiInfoEdit = row
+      },
+      shanchuzhuotai (i, row) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'danger'
+        }).then(() => {
+          axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/deleteTable?id=' + row.id).then((res) => {
+            if (res.data.code === 1) {
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+              this.zhuotaiInfoLoad()
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.message
+              })
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
+      shanchuFenzu (i, row) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'danger'
+        }).then(() => {
+          axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/deleteTag?tag_id=' + row.tag_id).then((res) => {
+            if (res.data.code === 1) {
+              this.$message({
+                type: 'success',
+                message: '删除成功'
+              })
+              this.zhuotaiGroupInfoLoad()
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.message
+              })
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
       }
     }
   }
@@ -426,7 +823,10 @@
 
 <style>
   /*店铺信息*/
+  .el-dialog__body{padding-bottom:0;}
   .navTitle{line-height: 40px;background-color: white;color: black;padding-left: 20px;margin-bottom: 5px;border-bottom:1px solid #eee;}
+  .navTitle .pl{margin-left:40px;}
+  .navTitle .el-button{margin-bottom: 20px;}
   .navBody{line-height: 40px;background-color: white;}
   .navContent{padding-top: 20px;padding-bottom: 20px;background-color: white;margin-bottom: 5px;border-bottom:1px solid #eee;}
   /*店铺信息结束*/
@@ -464,4 +864,7 @@
   .Mtop{
     margin-top: 20px;
   }
+  .zhuotai{margin-bottom: 20px;padding: 20px;background: white;box-shadow: 0 10px 16px -10px rgba(0, 0, 0, 0.7);border-radius: 4px;}
+  .zhuotai p{margin: 5px;}
+  .zhuotaiContent{background-color: #eee;padding-top: 20px;padding-left: 30px;}
 </style>

@@ -218,7 +218,7 @@
   var zhuangtai = ''
   var zhuangtaiBtn = ''
   var goods = ''
-  var url = 'http://pos.wangdoukeji.com/'
+  var url = 'https://cdn.wangdoukeji.com/'
   function timer (aaa) {
     return new Date(parseInt(aaa) * 1000).toLocaleString().replace(/年|月/g, '-').replace(/日/g, ' ')
   }
@@ -317,6 +317,11 @@
       // 页面加载请求
       this.pageLoad()
       this.goodsLoad()
+      if (this.$route.query.id === 1) {
+        this.newGoods()
+      } else if (this.$route.query.id === 2) {
+        this.activeName = 'second'
+      }
     },
     methods: {
       // 搜索商品
