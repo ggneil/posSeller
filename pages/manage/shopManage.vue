@@ -622,8 +622,6 @@
               this.shopStatusBtn = true
             }
             var url = 'https://cdn.wangdoukeji.com/'
-            localStorage.setItem('shopName', res.data.shop[0].name)
-            localStorage.setItem('phone', res.data.shop[0].service_mobile)
             this.shopInfo = {
               name: res.data.shop[0].name,
               checkedDay: res.data.shop_time[0].week.split(','),

@@ -14,7 +14,7 @@
           <span>{{shopInfo[index].name}}</span>
           <div class="bottom clearfix">
             <time class="time">营业状态：{{shopInfo[index].operating}}</time>
-            <el-button type="text" @click="open1(shopInfo[index].shopId)" class="button">进入店铺</el-button>
+            <el-button type="text" @click="open1(shopInfo[index].shopId, shopInfo[index].name)" class="button">进入店铺</el-button>
             <el-button type="text" @click="open2(shopInfo[index].shopId, index)" style="color:red;" class="button">删除</el-button>
           </div>
         </div>
@@ -76,8 +76,12 @@
         })
       },
       // 进入店铺函数
-      open1 (shopId) {
+      open1 (shopId, name) {
         localStorage.setItem('shop_id', shopId)
+        localStorage.setItem('shopName', name)
+        axios.post('/seller/shop/shopDetail?shop_id=' + this.shopId).then((res) => {
+          localStorage.setItem('phone', res.data.shop[0].service_mobile)
+        })
         location.href = '/manage/worker'
       },
       // 删除操作函数

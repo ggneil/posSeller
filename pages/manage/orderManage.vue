@@ -569,7 +569,7 @@ export default {
               payType = ''
             }
             orderTime = new Date(parseInt(res.data.order[keys].create_time) * 1000).toLocaleString().replace(/年|月/g, '-').replace(/日/g, ' ')
-            this.tableData4.push({ pay_type: payType, payorder_number: res.data.order[keys].trade_no, order_tel: res.data.order[keys].phone, pay_status: payStatus, order_status: orderStatus, money_number: res.data.order[keys].amount, user_name: userName, time: orderTime, order_id: res.data.order[keys].order_id, tableNo: res.data.order[keys].table_id })
+            this.tableData4.push({ pay_type: payType, order_number: res.data.order[keys].trade_no, order_tel: res.data.order[keys].phone, pay_status: payStatus, order_status: orderStatus, money_number: res.data.order[keys].amount, user_name: userName, time: orderTime, order_id: res.data.order[keys].order_id, tableNo: res.data.order[keys].table_id })
           }
         }
       })
