@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-row :span="20" class="parent">
-            <el-col class="header">
+            <el-col class="headerOne">
                 <div class="personal">个人账号设置</div>
                 <div class="button1" @click="logout">退出</div>
                 <router-link to="/shop/shopList" tag="div" class="button1">选择店铺</router-link>
@@ -98,7 +98,7 @@
 </script>
 
 <style>
-    .header{
+    .headerOne{
         height: 70px;
         padding: 10px 40px;
         background-color: #fc9538;

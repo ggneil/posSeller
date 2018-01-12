@@ -59,10 +59,10 @@
         <router-link :to="{path: '/manage/orderManage', query: {id: 3}}">
           <el-row>
             <el-col :span="12">
-              外卖订单-待发货
+              外卖订单-待接单
             </el-col>
             <el-col :span="12">
-              {{ 0 }}个订单
+              {{ weimaiNum }}个订单
             </el-col>
           </el-row>
         </router-link>
@@ -86,7 +86,7 @@
               外卖订单-待发货
             </el-col>
             <el-col :span="12">
-              {{ 0 }}个订单
+              {{ weimaiSendNum }}个订单
             </el-col>
           </el-row>
         </router-link>
@@ -139,6 +139,8 @@
         todayMoney: 0.00,
         tangshikaiguan: true,
         tanshiNum: 0,
+        waimaiNum: 0,
+        waimaiSendNum: 0,
         shuju: {
           jiaoyie: 0,
           yue: 0,
@@ -153,6 +155,8 @@
         this.shopStatusCode = res.data.data.shop_auth_status
         this.xiaochengxuStatusCode = res.data.data.applet_auth_status
         this.tanshiNum = res.data.data.tang_unpay_num
+        this.waimaiNum = res.data.data.take_out_waiting_list
+        this.waimaiSendNum = res.data.data.take_out_to_send
         if (this.shopStatusCode === 1) {
           this.tangshikaiguan = true
         } else {

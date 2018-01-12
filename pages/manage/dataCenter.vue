@@ -49,6 +49,7 @@
                     v-model="dateValue1"
                     align="right"
                     type="date"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     placeholder="选择日期"
                     :editable="false"
                     size="small"
@@ -61,6 +62,7 @@
                     v-model="dateValue2"
                     type="daterange"
                     align="right"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     placeholder="选择日期范围"
                     :editable="false"
                     size="small"
@@ -130,6 +132,7 @@
                     type="month"
                     size="small"
                     :editable="false"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     placeholder="选择月"
                     @change='timeChange2'
                     :picker-options="pickerOptions2">
@@ -191,6 +194,7 @@
                     v-model="dateValue4"
                     align="right"
                     type="date"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     @change="timeChange3"
                     placeholder="选择日期"
                     :editable="false"
@@ -202,6 +206,7 @@
                   <el-date-picker
                     v-model="dateValue5"
                     type="daterange"
+                    value-format="yyyy-MM-dd HH:mm:ss"
                     @change="timeChange3"
                     align="right"
                     placeholder="选择日期范围"
@@ -386,7 +391,7 @@
         yesterdayBrowseNum: 0, // 昨日浏览量
         yesterdayOrderNum: 0, // 昨日订单数
         yesterdayMoney: '0.00', // 昨日钱数
-        time: timerFirst.getFullYear() + '-' + timerFirst.getMonth() + '-' + timerFirst.getDate() + '  ' + timerFirst.getHours() + '：' + timerFirst.getMinutes() + '：' + timerFirst.getSeconds(), // 时间
+        time: timerFirst.getFullYear() + '-' + (timerFirst.getMonth() + 1) + '-' + timerFirst.getDate() + '  ' + timerFirst.getHours() + '：' + timerFirst.getMinutes() + '：' + timerFirst.getSeconds(), // 时间
         activeName: 'first' // 第一个显示 商品管理
       }
     },
@@ -417,6 +422,7 @@
       // 第二次交易构成月份筛选
       timeChange2 (shijian) {
         this.value3 = shijian
+        this.dealFormLoad()
       },
       // 第三次商品分析时间筛选
       timeChange3 (shijian) {
@@ -452,7 +458,7 @@
       },
       // 商品分析加载
       goodsInfoLoad () {
-        axios.post('/seller/Data/goodsAnalyze?shop_id=' + this.shopId + '&time_from=' + this.value4 + '&time_to=' + this.value5).then((res) => {
+        axios.post('/seller/Data/goodsAnalyze?shop_id=' + this.shopId + '&time_from=' + this.dateValue4 + '&time_to=' + this.dateValue5).then((res) => {
           if (res.data.error) {
             this.$message({
               type: 'error',
@@ -473,7 +479,7 @@
       },
       // 交易情况查询
       searchLoad () {
-        axios.post('/seller/Data/tradingOutlook?shop_id=' + this.shopId + '&time_from=' + this.value1 + '&time_to=' + this.value2).then((res) => {
+        axios.post('/seller/Data/tradingOutlook?shop_id=' + this.shopId + '&time_from=' + this.dateValue1 + '&time_to=' + this.dateValue2).then((res) => {
           if (res.data.error) {
             this.$message({
               type: 'error',
@@ -493,7 +499,7 @@
       },
       // 交易构成
       dealFormLoad () {
-        axios.post('/seller/Data/tradeComposition?shop_id=' + this.shopId + '&month=' + this.value3).then((res) => {
+        axios.post('/seller/Data/tradeComposition?shop_id=' + this.shopId + '&month=' + this.dateValue3).then((res) => {
           if (res.data.error) {
             this.$message({
               type: 'error',
@@ -550,7 +556,7 @@
     }
   }
 </script>
-<style>
+<style co>
  .el-tabs__header{margin-bottom: 0}
  .bgwhite{background-color: white;margin-top: 15px;padding-left: 20px;}
  .touhenglan{line-height: 40px;border-bottom: 1px solid #eee;}

@@ -16,10 +16,10 @@
                   prop="qiyemingcheng"
                   :rules="[
                     { required: true, message: '企业名称', trigger: 'blur'},
-                    { min: 2, max: 24, message: '长度在 2 或 24 个字符', trigger: 'blur' }
+                    { min: 2, max: 24, message: '长度在 2 到 24 个字符', trigger: 'blur' }
                   ]"
                 >
-                  <el-input placeholder="长度在 2 或 24 个字符" v-model="shanghu.qiyemingcheng" size="small"></el-input>
+                  <el-input placeholder="长度在 2 到 24 个字符" v-model="shanghu.qiyemingcheng" size="small"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -31,10 +31,10 @@
                 <el-form-item
                   prop="faren"
                   :rules="[
-                    { required: true, min: 2, max: 10, message: '法人不能为空（长度在 2 或 10 个字符）', trigger: 'blur'}
+                    { required: true, min: 2, max: 10, message: '法人不能为空（长度在 2 到 10 个字符）', trigger: 'blur'}
                   ]"
                 >
-                  <el-input placeholder="长度在 2 或 10 个字符" v-model="shanghu.faren" size="small"></el-input>
+                  <el-input placeholder="长度在 2 到 10 个字符" v-model="shanghu.faren" size="small"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -254,6 +254,19 @@ export default {
     }
   },
   beforeMount () {
+    var that = this
+    // 获取店铺状态
+    axios.get('https://cdn.wangdoukeji.com/index.php/seller/shop/getIndexStatus?shop_id=' + localStorage.getItem('shop_id')).then((res) => {
+      if (res.data.data.shop_auth_status === 1) {
+        that.$message({
+          type: 'success',
+          message: '已完成认证，4秒后自动跳转'
+        })
+        setTimeout(function () {
+          that.$router.push({path: '/manage/shopManage'})
+        }, 4000)
+      }
+    })
     this.shopId = localStorage.getItem('shop_id')
     this.shopName = localStorage.getItem('shopName')
     this.shanghu.phone = localStorage.getItem('phone')
@@ -270,6 +283,7 @@ export default {
                 type: 'success',
                 message: res.data.msg
               })
+              this.$router.push({path: '/manage/shopManage'})
             } else {
               that.$message({
                 type: 'error',

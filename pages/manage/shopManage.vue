@@ -36,13 +36,9 @@
           </el-row>
         </div>
         <el-row class="navTitle">
-          <p>联系电话</p>
-          <p class="pl">18943541649</p>
-        </el-row>
-        <el-row class="navTitle">
           <p>认证信息</p>
           <p class="pl">{{ shopStatus }}</p>
-          <el-button class="pl" :disabled="shopStatusBtn" @click="shengqingrenzheng" type="primary" size="small">{{ shopStatusBtn ? '已认证' : '申请认证' }}</el-button>
+          <el-button class="pl" :disabled="shopStatusBtn" @click="shopStatusBtn ? '' : shengqingrenzheng" type="primary" size="small">{{ shopStatusBtn ? '已认证' : '申请认证' }}</el-button>
         </el-row>
       </div>
       <el-row type="flex" justify="center" v-show="changeInfo">
@@ -222,7 +218,7 @@
                 <el-button
                   size="small"
                   type="primary"
-                  >生成小程序码</el-button></a>
+                  >生成桌台码</el-button></a>
               <el-button
                 size="small"
                 type="danger"
@@ -275,12 +271,12 @@
               { max: 8, message: '最多八位', trigger: 'blur' }
             ]"
           >
-            <el-input v-model="zhuotaiGroupInfoEdit.name" placeholder="类型名称（1-8）"></el-input>
+            <el-input v-model="zhuotaiGroupInfoEdit.name" placeholder="桌台类型"></el-input>
           </el-form-item>
           <el-form-item
             prop="min"
             :rules="[
-              { required: true, message: '最小值不能为空（最多2位）', trigger: 'blur' }
+              { required: true, message: '最小值可坐人数不能为空（最多2位）', trigger: 'blur' }
             ]"
           >
             <el-input type="number" v-model="zhuotaiGroupInfoEdit.min" placeholder="最少可坐人数（1-2位数字）"></el-input>
@@ -314,7 +310,7 @@
               <el-option
                 v-for="item in zhuotaiGroupInfo"
                 :key="item.tag_id"
-                :label="item.name + '(' + item.min + '-' + item.max + ')'"
+                :label="item.name + '(' + item.min + '-' + item.max + '人)'"
                 :value="item.tag_id">
               </el-option>
             </el-select>
@@ -326,7 +322,7 @@
               { max: 8, message: '最多八位', trigger: 'blur' }
             ]"
           >
-            <el-input v-model="zhuotaiInfoEdit.table_id" placeholder="桌号名称（1-8位）"></el-input>
+            <el-input v-model="zhuotaiInfoEdit.table_id" placeholder="桌号名称（x-y人）"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -533,13 +529,13 @@
       zhuotaibuildleixing (tagid, formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.tianjiazhuotai = false
             axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/addTable?shop_id=' + this.shopId + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
               if (res.data.code === 1) {
                 this.$message({
                   type: 'success',
                   message: '新建成功'
                 })
+                this.tianjiazhuotai = false
                 this.zhuotaiInfoLoad()
               } else {
                 this.$message({
@@ -762,7 +758,7 @@
         this.zhuotaiInfoEdit = row
       },
       shanchuzhuotai (i, row) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该桌位, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'danger'
@@ -789,7 +785,7 @@
         })
       },
       shanchuFenzu (i, row) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该桌位, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'danger'

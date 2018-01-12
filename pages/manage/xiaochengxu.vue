@@ -17,7 +17,7 @@
             <el-button @click="weixinxiaochengxuzhuce" type="" size="small">注册微信小程序</el-button>
           </el-col>
         </el-row>
-        <el-row v-if="!authorization" class="zong">
+        <el-row v-if="!authorization && !shanghuhaoStatus" class="zong">
           <el-col class="heng heng1">
             <h3>微信小程序</h3>
           </el-col>
@@ -96,6 +96,76 @@
             </el-form>
           </el-col>
         </el-row>
+        <el-row v-if="!authorization && shanghuhaoStatus" class="zong">
+          <el-col class="heng heng1">
+            <h3>微信小程序</h3>
+          </el-col>
+          <el-col>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                小程序：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                {{ name }} <el-button @click="shouquanjiemian" type="text">重新授权</el-button> <el-button @click="quxiaoshouquan" type="text">解除授权</el-button>
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                线上版本：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                1.0
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                更新时间：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                无
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                更新状态：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                最新版本（1.8.0）正在等待微信审核
+                <p>小程序升级后，系统会自动将最新的小程序提交给微信</p>
+                <p>微信审核通过后，您的小程序即可升级到最新版本</p>
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4" style="color: black;">
+                微信支付
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                商户号：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                {{ shanghu.shanghuhao }}
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                商户密钥：
+              </el-col>
+              <el-col class="hangR" :span="20">
+                {{ shanghu.miyao }}
+              </el-col>
+            </el-row>
+            <el-row class="hangIn">
+              <el-col class="hangL" :span="4">
+                &nbsp;
+              </el-col>
+              <el-col class="hangR1" :span="20">
+                <el-button size="small" type="primary" @click="shanghuhaoStatus = false">修改配置</el-button>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
       </div>
       <el-row v-if="!jiaocheng" class="zong">
         <el-col class="heng heng1">
@@ -136,6 +206,7 @@ export default {
       checked: false,
       jiaocheng: true,
       shopId: 0,
+      shanghuhaoStatus: false,
       dialogVisible: false,
       shanghu: {
         shanghuhao: '',
@@ -146,21 +217,39 @@ export default {
   beforeMount () {
     this.shopId = localStorage.getItem('shop_id')
     this.panduanshouquan()
+    axios.get('https://cdn.wangdoukeji.com/seller/shop/getWxPayStatus?shop_id=' + this.shopId).then((res) => {
+      if (res.data.code === 1) {
+        this.shanghuhaoStatus = true
+      }
+    })
     axios.get('https://cdn.wangdoukeji.com/index.php/seller/plugin/getAppletName?shop_id=' + this.shopId).then((res) => {
       this.name = res.data.data
     })
+    this.getshanghuhao()
   },
   methods: {
+    // 获取商户密钥和商户号
+    getshanghuhao () {
+      axios.get('https://cdn.wangdoukeji.com/seller/shop/showwxpaymsg?shop_id=' + this.shopId).then((res) => {
+        this.shanghu.shanghuhao = res.data.data.wx_pay_mch_id
+        this.shanghu.miyao = res.data.data.wx_pay_key
+      })
+    },
     submitForm (formName) {
       var that = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          axios.post('https://cdn.wangdoukeji.com/index.php/index/Open/getWxPayMsg?shop_id=' + this.shopId + '&mch_id=' + this.shanghu.shanghuhao + '&key=' + this.shanghu.miyao).then((res) => {
+          axios.post('https://cdn.wangdoukeji.com/index.php/seller/shop/getWxPayMsg?shop_id=' + this.shopId + '&mch_id=' + this.shanghu.shanghuhao + '&key=' + this.shanghu.miyao).then((res) => {
             console.log(res.data.code)
             if (res.data.code === 1) {
               that.$message({
                 type: 'success',
                 message: '提交成功请等待微信审核'
+              })
+              axios.get('https://cdn.wangdoukeji.com/seller/shop/getWxPayStatus?shop_id=' + this.shopId).then((res) => {
+                if (res.data.code === 1) {
+                  this.shanghuhaoStatus = true
+                }
               })
             } else {
               that.$message({
@@ -192,6 +281,10 @@ export default {
     quedingzhuce () {
       this.panduanshouquan()
       this.dialogVisible = false
+      this.$message({
+        type: 'success',
+        message: '提交成功'
+      })
     },
     quxiaoshouquan () {
       var that = this

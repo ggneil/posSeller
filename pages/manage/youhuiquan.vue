@@ -48,7 +48,7 @@
                 </el-table-column>
                 <el-table-column
                   label="数量"
-                  width="140">
+                  width="100">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -59,7 +59,7 @@
                 </el-table-column>
                 <el-table-column
                   label="应达到金额"
-                  width="140">
+                  width="120">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -100,6 +100,10 @@
                     <el-button
                       size="small"
                       @click="handleEdit2(scope.$index, scope.row)">{{ scope.row.couponStatusBtn }}</el-button>
+                    <el-button
+                      type="danger"
+                      @click="deleteC(scope.row.couponId)"
+                      size="small">删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -243,7 +247,7 @@
         // 时间段选择
         pickerOptions0: {
           disabledDate (time) {
-            return time.getTime() < Date.now()
+            return time.getTime() < Date.now() - 3600000 * 24
           }
         },
         zhuangtai: '',
@@ -324,6 +328,22 @@
       }
     },
     methods: {
+      // 删除优惠券
+      deleteC (couponid) {
+        this.$confirm('此操作将永久删除该优惠券', '温馨提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.get('https://cdn.wangdoukeji.com/index.php/seller/coupon/deleteCoupon?coupon_id=' + couponid).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '操作成功'
+            })
+            this.pageLoad()
+          })
+        }).catch(() => {})
+      },
       // 搜索商品
       searchGoods1 (value) {
         this.searchLoad(value)

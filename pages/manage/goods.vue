@@ -206,6 +206,19 @@
           }
         }
       }
+      // 上传商品表单验证
+      var intReg = /^[1-9][0-9]+$/
+      var intValidateMobile = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('库存格式不正确（例：12）正整数'))
+        } else {
+          if (!intReg.test(value)) {
+            callback(new Error('库存格式不正确（例：12）正整数'))
+          } else {
+            callback()
+          }
+        }
+      }
       return {
         zhuangtai: '',
         zhuangtaiBtn: '',
@@ -233,7 +246,7 @@
           name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
           price: [{ required: true, validator: validateMobile, trigger: 'blur' }],
           boxPrice: [{ required: true, validator: validateMobile, trigger: 'blur' }],
-          num: [{ required: true, message: '设置库存', trigger: 'blur' }],
+          num: [{ required: true, validator: intValidateMobile, trigger: 'blur' }],
           group: [{ type: 'array', required: true, message: '请选择分类', trigger: 'change' }]
         },
         // 表单
@@ -334,6 +347,33 @@
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
+                axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: this.tableData[0].id }).then((res) => {
+                  if (res.data.error) {
+                    console.log(res.data.error.msg)
+                  } else {
+                    this.groupGoods = res.data.goods
+                    this.tableData1 = []
+                    for (var keys in this.groupGoods) {
+                      if (this.groupGoods[keys].path === null || this.groupGoods[keys].path === undefined) {
+                        url = ''
+                        this.groupGoods[keys].path = '../../static/weixin.png'
+                      } else {
+                        url = 'https://cdn.wangdoukeji.com/'
+                      }
+                      if (this.groupGoods[keys].status === 1) {
+                        console.log(1)
+                        zhuangtai = '已上架'
+                        zhuangtaiBtn = '下架'
+                        this.tableData1.push({ goodsName: this.groupGoods[keys].goods_name, goodsPrice: this.groupGoods[keys].goods_price + '元', goodsId: this.groupGoods[keys].goods_id, goodsStatus: zhuangtai, goodsStatusBtn: zhuangtaiBtn, ico: url + this.groupGoods[keys].path.replace(/\\/, '') })
+                      } else {
+                        console.log(2)
+                        zhuangtai = '已下架'
+                        zhuangtaiBtn = '上架'
+                        this.tableData1.push({ goodsName: this.groupGoods[keys].goods_name, goodsPrice: this.groupGoods[keys].goods_price + '元', goodsId: this.groupGoods[keys].goods_id, goodsStatus: zhuangtai, goodsStatusBtn: zhuangtaiBtn, ico: url + this.groupGoods[keys].path.replace(/\\/, '') })
+                      }
+                    }
+                  }
+                })
                 this.formAddGoods.name = ''
                 this.formAddGoods.description = ''
                 this.formAddGoods.price = ''
@@ -567,7 +607,7 @@
               console.log(res.data.error.msg)
             } else {
               row.splice(index, 1)
-              this.pageLoad()
+              // this.pageLoad()
               this.$message({
                 message: '删除成功',
                 type: 'success'
