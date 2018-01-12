@@ -19,7 +19,8 @@
     "express": "^4.16.1",
     "express-session": "^1.15.6",
     "nuxt": "^1.0.0-rc11",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "jquery": "^2.2.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

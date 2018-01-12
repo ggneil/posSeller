@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const webpack= require('webpack')
 module.exports = {
   /*
   ** Headers of the page
@@ -28,8 +29,16 @@ module.exports = {
     /*
     ** Run ESLint on save
     */
-    vendor: ['element-ui','axios'],
-
+    vendor: ['element-ui','axios','jquery'],
+    plugins: [
+      new webpack.ProvidePlugin (
+        {
+          $: 'jquery',
+          jQuery: 'jquery',
+          'window.jQuery': 'jquery'
+        }
+      )
+    ],
     extend (config, ctx) {
       if (ctx.dev && ctx.isClient) {
         config.module.rules.push({

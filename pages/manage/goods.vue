@@ -122,7 +122,7 @@
                 <el-input type="number" v-model="formAddGoods.num" placeholder="1000"></el-input>
               </el-form-item>
               <el-form-item label="分组：" prop="group">
-                <el-checkbox-group v-model="formAddGoods.group" :max="1">
+                <el-checkbox-group v-model="formAddGoods.group">
                   <el-checkbox
                    v-for="item in tableData"
                    :label="item.id"
@@ -207,7 +207,7 @@
         }
       }
       // 上传商品表单验证
-      var intReg = /^[1-9][0-9]+$/
+      var intReg = /^[1-9][0-9]*$/
       var intValidateMobile = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('库存格式不正确（例：12）正整数'))
@@ -440,6 +440,7 @@
       // 提交
       checkChange (tagId) {
         this.groupId = tagId
+        this.formAddGoods.group = [tagId]
       },
       // 表单提交
       submitForm (formName, style) {
@@ -447,6 +448,10 @@
           if (valid) {
             axios.post('/seller/Goods/addGoods', { shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
               if (res.data.error) {
+                this.$message({
+                  type: 'error',
+                  message: '添加失败'
+                })
                 console.log(res.data.error.msg)
               } else {
                 this.formAddGoods.name = ''
@@ -461,6 +466,10 @@
                   this.pageLoad()
                   this.handleShow()
                 }
+                this.$message({
+                  type: 'success',
+                  message: '添加成功'
+                })
               }
             })
             console.log('成功')

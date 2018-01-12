@@ -1,11 +1,11 @@
 <template>
-    <el-row type="flex" justify="center">
+    <el-row type="flex" justify="center" class="modify-bg">
         <el-col :xs="18" :sm="12" :md="10" :lg="8">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
                     <h3>修改密码</h3>
                 </div>
-                <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+                <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="80px" class="demo-ruleForm">
                     <el-form-item label="旧密码" prop="password">
                         <el-input type="password" v-model="ruleForm2.password" auto-complete="off"></el-input>
                     </el-form-item>
@@ -113,7 +113,7 @@
 
 <style>
     body{}
-    .box-card{margin-top: 80px}
+    .box-card{margin-top: 80px;background-color: hsla(0,0%,100%,.4);}
     @media (max-width: 768px){
         .el-col-xs-18 .el-card{
             border: none;
@@ -125,5 +125,17 @@
         display: block;
         text-align: right;
         color: #6e6e6e;
+    }
+    .modify-bg {
+        background: url(/_nuxt/img/banner.48e6129.jpg) no-repeat;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-size: 100% 100%;
+    }
+    .el-input__inner {
+        background-color: hsla(0,0%,100%,.6);
     }
 </style>
