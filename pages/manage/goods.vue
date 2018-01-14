@@ -207,7 +207,7 @@
         }
       }
       // 上传商品表单验证
-      var intReg = /^[1-9][0-9]*$/
+      var intReg = /^[1-9][0-9]+$/
       var intValidateMobile = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('库存格式不正确（例：12）正整数'))
@@ -440,7 +440,8 @@
       // 提交
       checkChange (tagId) {
         this.groupId = tagId
-        this.formAddGoods.group = [tagId]
+        this.formAddGoods.group = []
+        this.formAddGoods.group[0] = tagId
       },
       // 表单提交
       submitForm (formName, style) {

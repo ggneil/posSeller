@@ -81,7 +81,7 @@
       open1 (shopId, name) {
         localStorage.setItem('shop_id', shopId)
         localStorage.setItem('shopName', name)
-        axios.post('/seller/shop/shopDetail?shop_id=' + this.shopId).then((res) => {
+        axios.post('/seller/shop/shopDetail?shop_id=' + shopId).then((res) => {
           localStorage.setItem('phone', res.data.shop[0].service_mobile)
         })
         location.href = '/manage/worker'
@@ -120,7 +120,7 @@
 </script>
 
 <style>
-  .header{
+  .header2{
     height: 70px;
     padding: 20px 40px;
     background-color: #fc9538;
@@ -128,6 +128,7 @@
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 99999;
     width: 100%
   }
   .logo{

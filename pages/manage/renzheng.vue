@@ -304,7 +304,7 @@ export default {
         if (res.data.code === 1) {
           that.$message({
             type: 'success',
-            message: res.data.msg
+            message: '验证码发送成功'
           })
         } else {
           that.$message({

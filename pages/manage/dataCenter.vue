@@ -556,7 +556,7 @@
     }
   }
 </script>
-<style co>
+<style>
  .el-tabs__header{margin-bottom: 0}
  .bgwhite{background-color: white;margin-top: 15px;padding-left: 20px;}
  .touhenglan{line-height: 40px;border-bottom: 1px solid #eee;}
