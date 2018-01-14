@@ -56,8 +56,17 @@
         }
       }
     },
+    beforeMount () {
+      this.load()
+    },
     methods: {
-
+      load () {
+        var userId = localStorage.getItem('user_id')
+        console.log(userId)
+        if (userId !== null) {
+          location.assign('/shop/shopList')
+        }
+      },
       async login () {
         let $valid = false
         console.log(this)
