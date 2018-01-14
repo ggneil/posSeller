@@ -7,18 +7,18 @@
                 </div>
                 <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="80px" class="demo-ruleForm">
                     <el-form-item label="旧密码" prop="password">
-                        <el-input type="password" v-model="ruleForm2.password" auto-complete="off"></el-input>
+                        <el-input size="small" type="password" v-model="ruleForm2.password" auto-complete="off"></el-input>
                     </el-form-item>
                     <el-form-item label="新密码" prop="pass">
-                        <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+                        <el-input size="small" type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
                     </el-form-item>
                     <el-form-item label="确认密码" prop="checkPass">
-                        <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" @keyup.enter.native="submitForm('ruleForm2')"></el-input>
+                        <el-input size="small" type="password" v-model="ruleForm2.checkPass" auto-complete="off" @keyup.enter.native="submitForm('ruleForm2')"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm2')" class="submit-btn1">提交</el-button>
-                        <el-button @click="resetForm('ruleForm2')">重置</el-button>
-                        <el-button @click="fanhui">返回</el-button>
+                        <el-button size="small" type="primary" @click="submitForm('ruleForm2')" class="submit-btn1">提交</el-button>
+                        <el-button size="small" @click="resetForm('ruleForm2')">重置</el-button>
+                        <el-button size="small" @click="fanhui">返回</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -105,7 +105,7 @@
       },
       // 返回店铺
       fanhui () {
-        location.assign('/manage/goods')
+        location.assign('/manage/worker')
       }
     }
   }

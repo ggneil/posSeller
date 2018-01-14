@@ -110,12 +110,12 @@
 					<div class="order_list">
 						<el-table ref="multipleTable2" :data="tableData5" border tooltip-effect="dark" style="width: 100%">
 							<el-table-column prop="order_number" label="订单号" width="180"></el-table-column>
-							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
-							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
+							<el-table-column prop="pay_status" label="支付状态" width="80"></el-table-column>
+							<el-table-column prop="order_status" label="订单状态" width="80" show-overflow-tooltip></el-table-column>
 							<el-table-column prop="money_number" label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
 							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
-							<el-table-column prop="order_tel" label="电话" width="120"></el-table-column>
+							<el-table-column prop="order_tel" label="电话" width="110"></el-table-column>
 							<el-table-column prop="address" label="地址" width="120"></el-table-column>
 							<el-table-column prop="time" label="下单时间" width="180"></el-table-column>
 							<el-table-column label="操作" show-overflow-tooltip>
@@ -396,22 +396,29 @@ export default {
     },
     // 删除订单
     orderRemove (row) {
-      axios.post('/seller/Order/deleteDone?shop_id=' + this.shopId + '&order_id=' + row.order_id).then((res) => {
-        if (res.data.error) {
-          this.$message({
-            type: 'error',
-            message: res.data.error.msg
-          })
-          console.log(res.data.error.msg)
-        } else {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
-          this.doneOrderLoad()
-          this.doneOrderLoad1()
-          this.doneOrderLoad2()
-        }
+      this.$confirm('此操作将永久删除该订单是否继续', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        size: 'small'
+      }).then(() => {
+        axios.post('/seller/Order/deleteDone?shop_id=' + this.shopId + '&order_id=' + row.order_id).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+            console.log(res.data.error.msg)
+          } else {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            this.doneOrderLoad()
+            this.doneOrderLoad1()
+            this.doneOrderLoad2()
+          }
+        })
       })
     },
     // 切换订单状态
@@ -436,15 +443,15 @@ export default {
       console.log(targetName.label)
       if (targetName.label === '全部') {
         this.orderLoad2('/seller/Order/all?shop_id=' + this.shopId + '&time_from=' + this.value3 + '&time_to=' + this.value4 + '&type=2')
-        this.orderRemoveBtn = false
+        this.orderRemoveBtn2 = false
         this.orderStatus2 = '全部'
       } else if (targetName.label === '已完成') {
         this.doneOrderLoad2()
-        this.orderRemoveBtn = true
+        this.orderRemoveBtn2 = true
         this.orderStatus2 = '已完成'
       } else if (targetName.label === '未完成') {
         this.undoneOrderLoad2()
-        this.orderRemoveBtn = false
+        this.orderRemoveBtn2 = false
         this.orderStatus2 = '未完成'
       }
     },
@@ -453,15 +460,15 @@ export default {
       console.log(targetName.label)
       if (targetName.label === '全部') {
         this.orderLoad1('/seller/Order/all?shop_id=' + this.shopId + '&time_from=' + this.value3 + '&time_to=' + this.value4 + '&type=1')
-        this.orderRemoveBtn = false
+        this.orderRemoveBtn1 = false
         this.orderStatus1 = '全部'
       } else if (targetName.label === '已完成') {
         this.doneOrderLoad1()
-        this.orderRemoveBtn = true
+        this.orderRemoveBtn1 = true
         this.orderStatus1 = '已完成'
       } else if (targetName.label === '未完成') {
         this.undoneOrderLoad1()
-        this.orderRemoveBtn = false
+        this.orderRemoveBtn1 = false
         this.orderStatus1 = '未完成'
       }
     },

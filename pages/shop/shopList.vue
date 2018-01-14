@@ -1,6 +1,6 @@
 <template>
   <el-row :span="20" class="parent">
-    <el-col class="header">
+    <el-col class="header2">
       <router-link to="/">
         <img src="~static/images/logo1.png" class="logo">
       </router-link>

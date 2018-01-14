@@ -38,13 +38,14 @@
         <el-row class="navTitle">
           <p>认证信息</p>
           <p class="pl">{{ shopStatus }}</p>
-          <el-button class="pl" :disabled="shopStatusBtn" @click="shopStatusBtn ? '' : shengqingrenzheng" type="primary" size="small">{{ shopStatusBtn ? '已认证' : '申请认证' }}</el-button>
+          <el-button class="pl" :disabled="shopStatusBtn" @click="shengqingrenzheng" type="primary" size="small">{{ shopStatusBtn ? '已认证' : '申请认证' }}</el-button>
         </el-row>
       </div>
       <el-row type="flex" justify="center" v-show="changeInfo">
         <el-col :xs="22" :sm="18" :md="16" :lg="12">
           <el-card class="box-card">
             <div slot="header" class="head clearfix">
+              修改信息
             </div>
             <el-form :model="shopInfo" :rules="rules" ref="shopInfo">
               <el-form-item prop="name" label="店铺名称"
@@ -162,6 +163,7 @@
                   :options="province"
                   @change="addressID"
                   v-model="shopInfo.cityOption"
+                  :placeholder="morenCity"
                   @active-item-change="handleDistictChange">
                 </el-cascader>
               </el-form-item>
@@ -387,6 +389,7 @@
           address: '',
           cityOption: []
         },
+        morenCity: '',
         openTime1: '',
         openTime2: '',
         openTime3: '',
@@ -418,10 +421,6 @@
       if (this.$route.query.id) {
         this.activeName = 'second'
       }
-      this.shopInfoLoad()
-      this.zhuotaiInfoLoad()
-      this.zhuotaiGroupInfoLoad()
-      console.log(this.zhuotaiGroupInfo)
       axios.post('/seller/shop/getaddress', { id: 0 }).then((res) => {
         for (var keys in res.data.address) {
           this.province.push({
@@ -431,6 +430,9 @@
           })
         }
       })
+      this.shopInfoLoad()
+      this.zhuotaiInfoLoad()
+      this.zhuotaiGroupInfoLoad()
     },
     methods: {
       // 新建类型
@@ -602,6 +604,7 @@
       },
       // 地址id
       addressID (value) {
+        console.log(this.shopInfo.cityOption)
         this.shopInfo.addressId = value[2]
       },
       // 店铺信息加载
@@ -630,11 +633,11 @@
               mobile: res.data.shop[0].service_mobile,
               address: res.data.shop[0].address,
               imgId: res.data.shop[0].logo,
-              addressId: '',
+              addressId: res.data.shop[0].area[0].id,
               area: res.data.shop[0].area_id,
               logoUrl: url + res.data.shop[0].path.replace(/\\/, ''),
               week: res.data.shop_time[0].week,
-              cityOption: []
+              cityOption: [res.data.shop[0].province[0].id, res.data.shop[0].city[0].id, res.data.shop[0].area[0].id]
             }
             this.openTime1 = this.shopInfo.startTime1 + ' 至 ' + this.shopInfo.endTime1
             if (this.shopInfo.startTime2 === '0' && this.shopInfo.endTime2 === '0') {
@@ -650,6 +653,18 @@
               this.openTime3 = ''
             } else {
               this.openTime3 = this.shopInfo.startTime3 + ' 至 ' + this.shopInfo.endTime3
+            }
+            for (var x in this.province) {
+              if (this.province[x].value === res.data.shop[0].province[0].id) {
+                this.province[x].children.push({
+                  value: res.data.shop[0].city[0].id,
+                  label: res.data.shop[0].city[0].name,
+                  children: [{
+                    value: res.data.shop[0].area[0].id,
+                    label: res.data.shop[0].area[0].name
+                  }]
+                })
+              }
             }
           }
         })
@@ -745,7 +760,9 @@
         }
       },
       shengqingrenzheng () {
-        this.$router.push({path: '/manage/renzheng'})
+        if (!this.shopStatusBtn) {
+          this.$router.push({path: '/manage/renzheng'})
+        }
       },
       editFenzu (i, row) {
         this.xiugaiGroup = 1
@@ -826,8 +843,8 @@
   /*店铺信息结束*/
   .imgSize1{width:78px;height: 78px;}
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;}
-  /*.box-card .el-card__header{background-color: #409EFF;color: #ffffff;text-align: center}*/
-
+  .box-card .el-card__header{background-color: #fc9538;color: #ffffff;text-align: center}
+  .head{position: none;border: none;}
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

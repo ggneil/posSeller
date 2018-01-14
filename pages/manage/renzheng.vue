@@ -184,7 +184,7 @@
                     {required: true, message: '请输入验证码', trigger: 'blur'}
                   ]"
                 >
-                  <el-input placeholder="请输入验证码" v-model="shanghu.yanzhengma" style="width: 200px;" size="small"></el-input><el-button type="primary" @click="huoquyanzhengma" size="small">获取验证码</el-button>
+                  <el-input placeholder="请输入验证码" v-model="shanghu.yanzhengma" style="width: 200px;" size="small"></el-input><el-button type="primary" :disabled="smsBtnStatus" @click="huoquyanzhengma" size="small">{{ smsBtn }}</el-button>
                 </el-form-item>
                 <p>验证短信将发送到您绑定的手机：{{ shanghu.phone }}，请注意查收</p>
               </el-col>
@@ -208,6 +208,7 @@
 
 <script>
 import axios from '../../plugins/axios'
+var timer = null
 export default {
   layout: 'manage',
   data () {
@@ -217,6 +218,8 @@ export default {
       imageUrl2: '',
       imageUrl3: '',
       shopName: '关贺',
+      smsBtn: '获取验证码',
+      smsBtnStatus: false,
       activeName: 'first',
       authorization: true,
       checked: false,
@@ -299,25 +302,43 @@ export default {
     },
     // 获取验证码
     huoquyanzhengma () {
-      var that = this
-      axios.get('/seller/shop/sms?phone=' + this.shanghu.phone).then((res) => {
-        if (res.data.code === 1) {
-          that.$message({
-            type: 'success',
-            message: '验证码发送成功'
-          })
-        } else {
+      if (!this.smsBtnStatus) {
+        this.smsBtnStatus = true
+        var that = this
+        var countDown = 60
+        this.smsBtn = countDown + '秒之后重新发送'
+        timer = setInterval(function () {
+          console.log(1)
+          countDown--
+          that.smsBtn = countDown + '秒之后重新发送'
+          if (countDown === 1) {
+            clearInterval(timer)
+            that.smsBtn = '获取验证码'
+            that.smsBtnStatus = false
+          }
+        }, 1000)
+        axios.get('/seller/shop/sms?phone=' + this.shanghu.phone).then((res) => {
+          if (res.data.code === 1) {
+            that.$message({
+              type: 'success',
+              message: '验证码发送成功'
+            })
+          } else {
+            clearInterval(timer)
+            this.smsBtnStatus = false
+            this.smsBtn = '获取验证码'
+            that.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+          }
+        }).catch((err) => {
           that.$message({
             type: 'error',
-            message: res.data.msg
+            message: err.data
           })
-        }
-      }).catch((err) => {
-        that.$message({
-          type: 'error',
-          message: err.data
         })
-      })
+      }
     },
     handleAvatarSuccess (res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
