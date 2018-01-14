@@ -206,7 +206,7 @@
         width: 100%;
         display: inline-block;
         height: 40px;
-        margin-top:2px;
+        margin-top:1px;
         border-radius: 4px;
         border: none;
         color: #fff;

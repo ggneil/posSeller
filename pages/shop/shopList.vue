@@ -1,7 +1,9 @@
 <template>
   <el-row :span="20" class="parent">
-    <el-col class="header2">
-      <img src="~static/images/logo1.png" class="logo">
+    <el-col class="header">
+      <router-link to="/">
+        <img src="~static/images/logo1.png" class="logo">
+      </router-link>
       <router-link to="/" class="button1" tag="div">返回主页</router-link>
       <router-link to="/shop/create" class="button1" tag="div">创建店铺</router-link>
     </el-col>
@@ -130,7 +132,10 @@
     width: 100%
   }
   .logo{
-    height: 30px;
+    height: 70px;
+    padding: 8px;
+    margin-top: -20px;
+    margin-left: 20px;
   }
   .smallBox{
     margin-top: 20px;

@@ -449,6 +449,10 @@
           if (valid) {
             axios.post('/seller/Goods/addGoods', { shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
               if (res.data.error) {
+                this.$message({
+                  type: 'error',
+                  message: '添加失败'
+                })
                 console.log(res.data.error.msg)
               } else {
                 this.formAddGoods.name = ''
@@ -463,6 +467,10 @@
                   this.pageLoad()
                   this.handleShow()
                 }
+                this.$message({
+                  type: 'success',
+                  message: '添加成功'
+                })
               }
             })
             console.log('成功')
