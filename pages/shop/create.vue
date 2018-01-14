@@ -1,5 +1,10 @@
 <template>
   <el-row type="flex" justify="center">
+    <el-col class="header2">
+      <img src="~static/images/logo1.png" class="logo">
+      <router-link to="/" class="button1" tag="div">返回主页</router-link>
+      <router-link to="/shop/shopList" class="button1" tag="div">店铺列表</router-link>
+    </el-col>
     <el-col :xs="22" :sm="18" :md="16" :lg="12">
       <el-card class="box-card">
         <div slot="header" class="head clearfix">
@@ -110,7 +115,8 @@
             </el-time-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="text" @click="addTime">添加时段</el-button>
+            <el-button size="small" type="primary" @click="addTime">添加时段</el-button>
+            <el-button v-if="deleteBtn" size="small" @click="deleteTime">删除时段</el-button>
           </el-form-item>
           <el-form-item prop="mobile" label="电话">
             <el-input v-model="shopInfo.mobile" placeholder="手机号码"></el-input>
@@ -175,6 +181,7 @@
           cityOption: [],
           imgId: ''
         },
+        deleteBtn: false,
         addIndex: 0,
         tianjia1: false,
         tianjia2: false,
@@ -243,17 +250,39 @@
       // 添加时段
       addTime () {
         this.addIndex += 1
+        if (this.addIndex >= 3) {
+          this.$message({
+            type: 'error',
+            message: '已经添加不了更多了'
+          })
+          this.addIndex = 2
+        }
+        if (this.addIndex >= 1) {
+          this.deleteBtn = true
+        }
         if (this.addIndex === 1) {
           this.tianjia1 = true
           this.shopInfo.startTime2 = this.shopInfo.endTime1
         } else if (this.addIndex === 2) {
           this.tianjia2 = true
           this.shopInfo.startTime3 = this.shopInfo.endTime2
-        } else {
-          this.$message({
-            type: 'error',
-            message: '已经添加不了更多了'
-          })
+        }
+      },
+      // 删除时段
+      deleteTime () {
+        this.addIndex -= 1
+        if (this.addIndex <= 0) {
+          this.addIndex = 0
+        }
+        if (this.addIndex === 0) {
+          this.deleteBtn = false
+          this.tianjia1 = false
+          this.shopInfo.startTime2 = ''
+          this.shopInfo.endTime2 = ''
+        } else if (this.addIndex === 1) {
+          this.tianjia2 = false
+          this.shopInfo.startTime3 = ''
+          this.shopInfo.endTime3 = ''
         }
       },
       handleAvatarSuccess (res, file) {

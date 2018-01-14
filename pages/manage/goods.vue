@@ -122,7 +122,7 @@
                 <el-input type="number" v-model="formAddGoods.num" placeholder="1000"></el-input>
               </el-form-item>
               <el-form-item label="分组：" prop="group">
-                <el-checkbox-group v-model="formAddGoods.group" :max="1">
+                <el-checkbox-group v-model="formAddGoods.group">
                   <el-checkbox
                    v-for="item in tableData"
                    :label="item.id"
@@ -440,6 +440,8 @@
       // 提交
       checkChange (tagId) {
         this.groupId = tagId
+        this.formAddGoods.group = []
+        this.formAddGoods.group[0] = tagId
       },
       // 表单提交
       submitForm (formName, style) {

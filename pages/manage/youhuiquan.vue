@@ -26,7 +26,7 @@
                 style="width: 100%">
                 <el-table-column
                   label="券名"
-                  width="140">
+                  width="100">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -37,7 +37,7 @@
                 </el-table-column>
                 <el-table-column
                   label="面额"
-                  width="140">
+                  width="100">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -59,7 +59,7 @@
                 </el-table-column>
                 <el-table-column
                   label="应达到金额"
-                  width="120">
+                  width="100">
                   <template scope="scope">
                     <el-row>
                       <el-col>

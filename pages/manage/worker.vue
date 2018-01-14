@@ -42,7 +42,7 @@
         <el-switch
           v-model="waimaikaiguan"
           active-color="#13ce66"
-          disabled
+          :disabled="shopStatusCode !== 1"
           inactive-color="#ff4949">
         </el-switch>
       </el-col>
@@ -62,7 +62,7 @@
               外卖订单-待接单
             </el-col>
             <el-col :span="12">
-              {{ weimaiNum }}个订单
+              {{ waimaiNum }}个订单
             </el-col>
           </el-row>
         </router-link>
@@ -86,7 +86,7 @@
               外卖订单-待发货
             </el-col>
             <el-col :span="12">
-              {{ weimaiSendNum }}个订单
+              {{ waimaiSendNum }}个订单
             </el-col>
           </el-row>
         </router-link>
@@ -180,7 +180,7 @@
     },
     methods: {
       xiaochengxu () {
-        this.$router.push({path: '/manage/xiaochengxu'})
+        this.$router.push({path: '/manage/xiaochengxu?plugin_id=1'})
       },
       renzheng () {
         this.$router.push({path: '/manage/renzheng'})

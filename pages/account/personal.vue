@@ -4,7 +4,7 @@
             <el-col class="headerOne">
                 <div class="personal">个人账号设置</div>
                 <div class="button1" @click="logout">退出</div>
-                <router-link to="/shop/shopList" tag="div" class="button1">选择店铺</router-link>
+                <router-link to="/manage/worker" tag="div" class="button1">返回</router-link>
                 <div class="button1 tel">{{mobile}}</div>
             </el-col>
         </el-row>
@@ -16,7 +16,7 @@
                     </div>
                     <el-form :model="loginForm" :rules="rules" ref="loginForm">
                         <el-form-item prop="nickname">
-                            <el-input v-model="loginForm.nickname" placeholder="昵称" @keyup.enter.native="login"></el-input>
+                            <el-input v-model="loginForm.nickname" placeholder="账号昵称" @keyup.enter.native="login"></el-input>
                         </el-form-item>
                         <el-form-item class="submit-box">
                             <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">确认修改</el-button>
