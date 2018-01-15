@@ -152,7 +152,8 @@
                 </el-time-select>
               </el-form-item>
               <el-form-item>
-                <el-button type="text" @click="addTime">添加时段</el-button>
+                <el-button size="small" type="primary" @click="addTime">添加时段</el-button>
+                <el-button v-if="deleteBtn" size="small" @click="deleteTime">删除时段</el-button>
               </el-form-item>
               <el-form-item prop="mobile" label="电话">
                 <el-input v-model="shopInfo.mobile" placeholder="手机号码"></el-input>
@@ -354,6 +355,7 @@
         }
       }
       return {
+        deleteBtn: false,
         xiugaiGroup: 1,
         dialogVisible: false,
         tianjiazhuotai: false,
@@ -421,15 +423,6 @@
       if (this.$route.query.id) {
         this.activeName = 'second'
       }
-      axios.post('/seller/shop/getaddress', { id: 0 }).then((res) => {
-        for (var keys in res.data.address) {
-          this.province.push({
-            value: res.data.address[keys].id,
-            label: res.data.address[keys].name,
-            children: []
-          })
-        }
-      })
       this.shopInfoLoad()
       this.zhuotaiInfoLoad()
       this.zhuotaiGroupInfoLoad()
@@ -581,17 +574,39 @@
       // 添加时段
       addTime () {
         this.addIndex += 1
+        if (this.addIndex >= 3) {
+          this.$message({
+            type: 'error',
+            message: '已经添加不了更多了'
+          })
+          this.addIndex = 2
+        }
+        if (this.addIndex >= 1) {
+          this.deleteBtn = true
+        }
         if (this.addIndex === 1) {
           this.tianjia1 = true
           this.shopInfo.startTime2 = this.shopInfo.endTime1
         } else if (this.addIndex === 2) {
           this.tianjia2 = true
           this.shopInfo.startTime3 = this.shopInfo.endTime2
-        } else {
-          this.$message({
-            type: 'error',
-            message: '已经添加不了更多了'
-          })
+        }
+      },
+      // 删除时段
+      deleteTime () {
+        this.addIndex -= 1
+        if (this.addIndex <= 0) {
+          this.addIndex = 0
+        }
+        if (this.addIndex === 0) {
+          this.deleteBtn = false
+          this.tianjia1 = false
+          this.shopInfo.startTime2 = ''
+          this.shopInfo.endTime2 = ''
+        } else if (this.addIndex === 1) {
+          this.tianjia2 = false
+          this.shopInfo.startTime3 = ''
+          this.shopInfo.endTime3 = ''
         }
       },
       // 判断对象值返回索引
@@ -654,18 +669,27 @@
             } else {
               this.openTime3 = this.shopInfo.startTime3 + ' 至 ' + this.shopInfo.endTime3
             }
-            for (var x in this.province) {
-              if (this.province[x].value === res.data.shop[0].province[0].id) {
-                this.province[x].children.push({
-                  value: res.data.shop[0].city[0].id,
-                  label: res.data.shop[0].city[0].name,
-                  children: [{
-                    value: res.data.shop[0].area[0].id,
-                    label: res.data.shop[0].area[0].name
-                  }]
+            axios.post('/seller/shop/getaddress', { id: 0 }).then((res1) => {
+              for (var keys in res1.data.address) {
+                this.province.push({
+                  value: res1.data.address[keys].id,
+                  label: res1.data.address[keys].name,
+                  children: []
                 })
               }
-            }
+              for (var x in this.province) {
+                if (this.province[x].value === res.data.shop[0].province[0].id) {
+                  this.province[x].children.push({
+                    value: res.data.shop[0].city[0].id,
+                    label: res.data.shop[0].city[0].name,
+                    children: [{
+                      value: res.data.shop[0].area[0].id,
+                      label: res.data.shop[0].area[0].name
+                    }]
+                  })
+                }
+              }
+            })
           }
         })
       },

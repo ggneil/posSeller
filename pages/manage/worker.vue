@@ -38,7 +38,7 @@
     <h3>待办事项</h3>
     <el-row class="daiban">
       <el-col class="title" :span="12">
-        外卖（{{ waimaikaiguan ? '已开启' : '已关闭' }}）
+        {{ kuaididingdan }}（{{ waimaikaiguan ? '已开启' : '已关闭' }}）
         <el-switch
           v-model="waimaikaiguan"
           active-color="#13ce66"
@@ -47,7 +47,7 @@
         </el-switch>
       </el-col>
       <el-col class="title" :span="12">
-        堂食点餐（{{ tangshikaiguan ? '已开启' : '已关闭' }}）
+        {{ tangshidingdan }}（{{ tangshikaiguan ? '已开启' : '已关闭' }}）
         <el-switch
           :disabled="shopStatusCode !== 1"
           v-model="tangshikaiguan"
@@ -59,7 +59,7 @@
         <router-link :to="{path: '/manage/orderManage', query: {id: 3}}">
           <el-row>
             <el-col :span="12">
-              外卖订单-待接单
+              {{ kuaididingdan }}-待接单
             </el-col>
             <el-col :span="12">
               {{ waimaiNum }}个订单
@@ -71,7 +71,7 @@
         <router-link :to="{path: '/manage/orderManage', query: {id: 2}}">
           <el-row>
             <el-col :span="12">
-              堂食订单-待付款
+              {{ tangshidingdan }}-待付款
             </el-col>
             <el-col :span="12">
               {{ tanshiNum }}个订单
@@ -83,7 +83,7 @@
         <router-link :to="{path: '/manage/orderManage', query: {id: 3}}">
           <el-row>
             <el-col :span="12">
-              外卖订单-待发货
+              {{ kuaididingdan }}-待发货
             </el-col>
             <el-col :span="12">
               {{ waimaiSendNum }}个订单
@@ -114,8 +114,8 @@
       </router-link>
       <router-link :to="{path: '/manage/shopManage', query: {id: 2}}">
         <el-col :span="6">
-          <span class="ico can">餐</span>
-          <span class="tiao">堂食点餐</span>
+          <span class="ico can">店</span>
+          <span class="tiao">{{ tangshidiancan }}</span>
         </el-col>
       </router-link>
     </el-row>
@@ -128,6 +128,9 @@
     layout: 'manage',
     data () {
       return {
+        kuaididingdan: '外卖订单',
+        tangshidingdan: '堂食订单',
+        tangshidiancan: '堂食点餐',
         xiaochengxuStatus: null,
         xiaochengxuStatusCode: 1,
         shopStatus: null,
@@ -151,6 +154,11 @@
     },
     beforeMount () {
       // 获取店铺状态
+      if (localStorage.getItem('shopType') === 5) {
+        this.tangshidingdan = '店内下单'
+        this.kuaididingdan = '鲜花配送'
+        this.kuaididiancan = '店内订单'
+      }
       axios.get('https://cdn.wangdoukeji.com/index.php/seller/shop/getIndexStatus?shop_id=' + localStorage.getItem('shop_id')).then((res) => {
         this.shopStatusCode = res.data.data.shop_auth_status
         this.xiaochengxuStatusCode = res.data.data.applet_auth_status

@@ -22,7 +22,7 @@
               </div>
             </el-popover>
             <span v-popover:popover5 class="verification" style="outline: none;cursor: pointer;" :style="verification === '已认证' ? 'background-color: #f85;' : 'background-color: #ccc;'">{{verification}}</span>
-            <span class="restaurant">豆点餐饮</span>
+            <span class="restaurant">{{ shopType }}</span>
           </div>
         </div>
       </div>
@@ -84,6 +84,7 @@ import axios from '../plugins/axios'
 export default {
   data () {
     return {
+      shopType: '豆点餐饮',
       verification: '',
       // yindaoCode: 0,
       visible2: false,
@@ -129,6 +130,12 @@ export default {
           this.shopInfo = {
             username: res.data.shop[0].name,
             imglogo: url + res.data.shop[0].path.replace(/\\/, '')
+          }
+          // 店铺类型 默认是餐饮
+          // type5是礼品和鲜花所以不同
+          localStorage.setItem('shopType', res.data.shop[0].main_business)
+          if (res.data.shop[0].main_business === 5) {
+            this.shopType = '鲜花礼品'
           }
         }
       })

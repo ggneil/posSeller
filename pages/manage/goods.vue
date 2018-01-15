@@ -247,7 +247,7 @@
           price: [{ required: true, validator: validateMobile, trigger: 'blur' }],
           boxPrice: [{ required: true, validator: validateMobile, trigger: 'blur' }],
           num: [{ required: true, validator: intValidateMobile, trigger: 'blur' }],
-          group: [{ type: 'array', required: true, message: '请选择分类', trigger: 'change' }]
+          group: [{ type: 'array', required: true, message: '请选择分类（确保你已经有一个分组）', trigger: 'change' }]
         },
         // 表单
         formAddGoods: {
