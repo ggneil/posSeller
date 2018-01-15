@@ -1066,6 +1066,9 @@
         background-position: center;
         padding: 20px 0;
         position: relative;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
     }
     .container6 .more {
         background: #fc9538;
