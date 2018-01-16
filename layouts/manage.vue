@@ -51,10 +51,10 @@
           <i class="application-plug-in"></i>
           应用插件
         </el-menu-item>
-        <!-- <el-menu-item index="/manage/yindao">
+        <el-menu-item index="/manage/customerData">
           <i class="application-person"></i>
-          功能指引
-        </el-menu-item> -->
+          客户数据
+        </el-menu-item>
       </el-menu>
       <div class="acccount">
         <div class="userinfo">
