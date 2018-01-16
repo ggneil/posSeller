@@ -279,7 +279,8 @@
           <el-form-item
             prop="min"
             :rules="[
-              { required: true, message: '最小值可坐人数不能为空（最多2位）', trigger: 'blur' }
+              { required: true, message: '最小值可坐人数不能为空（最多2位）', trigger: 'blur' },
+              { min: 1, max: 2, message: '最小值可坐人数不能为空（最多2位）', trigger: 'blur' }
             ]"
           >
             <el-input type="number" v-model="zhuotaiGroupInfoEdit.min" placeholder="最少可坐人数（1-2位数字）"></el-input>
@@ -287,7 +288,9 @@
           <el-form-item
             prop="max"
             :rules="[
-              { required: true, message: '最大值不能为空（最多2位）', trigger: 'blur' }
+              { required: true, message: '最大值不能为空（最多2位）', trigger: 'blur' },
+              { min: 1, max: 2, message: '最小值可坐人数不能为空（最多2位）', trigger: 'blur' }
+
             ]"
           >
             <el-input type="number" v-model="zhuotaiGroupInfoEdit.max" placeholder="最多可坐人数（1-2位数字）"></el-input>

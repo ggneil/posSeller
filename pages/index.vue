@@ -1,13 +1,17 @@
 <template>
     <div>
-      <nav>
+        <nav>
           <div class="nav">
               <a href="/" class="nav-logo-a">
                   <img class="nav-logo" src="../static/images/index/logo.png" alt="">
               </a>
-              <a href="/account/login" style="float:right;">
-                  <div class="login">商户后台</div>
+              <a :href="loginHref" style="float:right;">
+                <div class="login">{{login}}</div>
               </a>
+              <div class="login-out">
+                  <div @click="logoIn">进入后台</div>
+                  <div @click="logout">退出登录</div>
+              </div>
               <ul class="nav-list">
                   <li>
                       <a class="active" href="#header">首页</a>
@@ -166,8 +170,6 @@
                           </div>
                       </div>
                   </div>
-
-
                   <div class="saas-left">
                       <img src="../static/images/index/ph_1.png">
                   </div>
@@ -351,13 +353,25 @@
           </div>
           <img class="fixImg yincang" src="../static/images/index/jlwx-200.png" alt="" />
       </footer>
-      </div>
+    </div>
 </template>
 
 <script>
   import $ from 'jquery'
   export default {
+    data () {
+      return {
+        login: '商户后台',
+        loginHref: '/account/login',
+        lcl: false
+      }
+    },
     mounted () {
+      if (localStorage.getItem('user_phone')) {
+        this.lcl = true
+        this.login = localStorage.getItem('user_phone')
+        this.loginHref = '/shop/shopList'
+      }
       var btn = document.querySelectorAll('#btn li')
       var cons = document.querySelectorAll('.cons div')
       for (var i = 0; i < btn.length; i++) {
@@ -469,6 +483,20 @@
           }
         })
       })
+      if (this.lcl) {
+        $('.login').mouseover(function () {
+          $('.login-out').css('display', 'block')
+        })
+        $('.login').mouseleave(function () {
+          $('.login-out').css('display', 'none')
+        })
+        $('.login-out').mouseover(function () {
+          $('.login-out').css('display', 'block')
+        })
+        $('.login-out').mouseleave(function () {
+          $('.login-out').css('display', 'none')
+        })
+      }
       // 导航样式
       var as = document.querySelectorAll('.nav-list li a')
       for (var n = 0; n < as.length; n++) {
@@ -478,6 +506,17 @@
           }
           this.className = 'active'
         }
+      }
+    },
+    methods: {
+      // 进入后台
+      logoIn () {
+        location.assign('/shop/shopList')
+      },
+      // 退出
+      logout () {
+        localStorage.clear()
+        location.assign('/')
       }
     }
   }
@@ -532,7 +571,31 @@
         background: #fff;
         z-index: 999;
     }
+    .login-out {
+        position: absolute;
+        right: 0;
+        top: 55px;
+        height: 40px;
+        z-index: 9999;
+        width: 130px;
+        text-align: center;
+        cursor: pointer;
+        display: none;
+    }
+    .login-out div {
+        box-sizing: border-box;
+        padding: 10px 0;
+        background: #fff;
+        width: 100%;
+        height: 100%;
+        font-size: 14px;
+    }
+    .login-out div:hover {
+        background-color: #eee;
+        color: #fc9538;
+    }
     .nav {
+        position: relative;
         width: 1200px;
         margin: 0 auto;
         height: 100%;

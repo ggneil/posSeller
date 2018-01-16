@@ -7,7 +7,7 @@
     </el-col>
     <el-col :xs="22" :sm="18" :md="16" :lg="12">
       <el-card class="box-card">
-        <div slot="header" class="head clearfix">
+        <div slot="header" class="head3 clearfix">
           <h3>创建店铺</h3>
         </div>
         <el-form :model="shopInfo" :rules="rules" ref="shopInfo">
@@ -345,6 +345,32 @@
 </script>
 
 <style scopedSlots>
+  .header2{
+    height: 70px;
+    padding: 20px 40px;
+    background-color: #fc9538;
+    box-shadow: 0 10px 10px -10px rgba(0, 0, 0, .3);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+    width: 100%
+  }
+  .logo{
+    height: 70px;
+    padding: 8px;
+    margin-top: -20px;
+    margin-left: 20px;
+  }
+  .button1{
+    padding: 0;
+    margin-right: 30px;
+    float: right;
+    line-height: 30px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+  }
   .box-card{margin-top: 80px;margin-bottom:80px;border-radius: 0;
     box-shadow: none;border: 1px solid #fc9538}
   .box-card .el-card__header{background-color: #fc9538;color: #ffffff;text-align: center}

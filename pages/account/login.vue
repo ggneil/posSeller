@@ -56,17 +56,7 @@
         }
       }
     },
-    beforeMount () {
-      // this.load()
-    },
     methods: {
-      // load () {
-      //   var userId = localStorage.getItem('user_id')
-      //   console.log(userId)
-      //   if (userId !== null) {
-      //     location.assign('/shop/shopList')
-      //   }
-      // },
       async login () {
         let $valid = false
         console.log(this)
@@ -100,6 +90,7 @@
               })
               var userId = res.data.user_id
               localStorage.setItem('user_id', userId)
+              localStorage.setItem('user_phone', that.loginForm.mobile)
               location.assign('/shop/shopList')
             }
           })

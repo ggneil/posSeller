@@ -272,7 +272,9 @@ export default {
     })
     this.shopId = localStorage.getItem('shop_id')
     this.shopName = localStorage.getItem('shopName')
-    this.shanghu.phone = localStorage.getItem('phone')
+    axios.post('/seller/shop/shopDetail?shop_id=' + this.shopId).then((res) => {
+      this.shanghu.phone = res.data.shop[0].service_mobile
+    })
   },
   methods: {
     // 点击提交

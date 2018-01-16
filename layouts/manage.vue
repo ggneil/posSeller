@@ -67,7 +67,7 @@
             <div>{{userInfo.mobile}}</div>
           </div>
           <router-link class="userinfo-pop-bd" to="/account/personal" tag="div">账号设置</router-link>
-          <router-link class="userinfo-pop-bd" to="/shop/shopList" tag="div">切换店铺</router-link>
+          <div class="userinfo-pop-bd" @click="switching">切换店铺</div>
           <div class="userinfo-pop-ft" @click="logout">退出</div>
         </div>
       </div>
@@ -159,6 +159,7 @@ export default {
     switching () {
       location.assign('/shop/shopList')
     },
+    // 退出
     logout () {
       location.assign('/account/login')
       localStorage.clear()

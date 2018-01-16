@@ -81,9 +81,6 @@
       open1 (shopId, name) {
         localStorage.setItem('shop_id', shopId)
         localStorage.setItem('shopName', name)
-        axios.post('/seller/shop/shopDetail?shop_id=' + shopId).then((res) => {
-          localStorage.setItem('phone', res.data.shop[0].service_mobile)
-        })
         location.href = '/manage/worker'
       },
       // 删除操作函数
@@ -93,7 +90,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          alert(shopId)
           axios.post('/seller/shop/deleteShop?shop_id=' + shopId).then((res) => {
             if (res.data.error) {
               this.$message({

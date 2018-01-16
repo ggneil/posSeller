@@ -207,7 +207,7 @@
         }
       }
       // 上传商品表单验证
-      var intReg = /^[1-9][0-9]+$/
+      var intReg = /^[1-9][0-9]*$/
       var intValidateMobile = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('库存格式不正确（例：12）正整数'))
@@ -343,7 +343,7 @@
       changeGoods (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/editGoods?goods_id=' + this.goodsId + '&img_id=' + this.imgId + '&goods_name=' + this.formAddGoods.name + '&goods_description=' + this.formAddGoods.description + '&goods_price=' + this.formAddGoods.price + '&box_price=' + this.formAddGoods.boxPrice + '&stock=' + this.formAddGoods.num + '&tag_id=' + this.tagId + '&shop_id=' + this.shopId).then((res) => {
+            axios.post('/seller/Goods/editGoods?goods_id=' + this.goodsId + '&img_id=' + this.imgId + '&goods_name=' + this.formAddGoods.name + '&goods_description=' + this.formAddGoods.description + '&goods_price=' + this.formAddGoods.price + '&box_price=' + this.formAddGoods.boxPrice + '&stock=' + this.formAddGoods.num + '&tag_id=' + this.groupId + '&shop_id=' + this.shopId).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
