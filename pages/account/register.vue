@@ -99,7 +99,7 @@
           }
         })
         if ($valid) {
-          this.submit_loading = true
+          // this.submit_loading = true
           try {
             await this.$store.dispatch('login', {
               mobile: this.loginForm.mobile,
@@ -107,7 +107,7 @@
               sms: this.loginForm.sms
             })
           } catch (e) {
-            this.submit_loading = false
+            // this.submit_loading = false
           }
           var that = this
           axios.post('/seller/user/register?mobile=' + this.loginForm.mobile + '&password=' + this.loginForm.password + '&verify=' + this.loginForm.sms).then(function (res) {
@@ -133,7 +133,6 @@
 </script>
 
 <style>
-    body{}
     .loginBg{background: url('~static/images/banner.jpg') no-repeat;position: absolute;top: 0;bottom: 0;left: 0;right: 0;background-size: 100% 100%;}
     .box-card{position: relative;margin-top: 150px;background-color: rgba(255, 255, 255, 0.4)}
     .submit-btn{width: 100%}

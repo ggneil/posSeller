@@ -281,10 +281,10 @@ export default {
     quedingzhuce () {
       this.panduanshouquan()
       this.dialogVisible = false
-      this.$message({
-        type: 'success',
-        message: '提交成功'
-      })
+      // this.$message({
+      //   type: 'success',
+      //   message: '提交成功'
+      // })
     },
     quxiaoshouquan () {
       var that = this

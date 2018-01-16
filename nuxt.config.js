@@ -55,7 +55,8 @@ module.exports = {
     'element-ui/lib/fc9538/index.css'
   ],
   plugins: [
-    { src: '~plugins/element-ui', ssr: true }
+    { src: '~plugins/element-ui', ssr: true },
+    { src: '~plugins/echarts', ssr: false }
   ],
   /*
  ** Add server middleware

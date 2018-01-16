@@ -5,8 +5,11 @@
 咨询电话： 15611528199</el-col>
 <el-col :span="11"  v-if="shopStatusCode === 1">店铺已正式开启，当前处于运营状态，如有问题请拨打电话<br>
 咨询电话： 15611528199</el-col>
+<el-col :span="11"  v-if="shopStatusCode === 2">店铺已正式开启，当前处于运营状态，如有问题请拨打电话<br>
+咨询电话： 15611528199</el-col>
       <el-col :span="4">
-        <el-button v-if="shopStatusCode !== 1" size="small" @click="renzheng">立即认证</el-button>
+        <el-button v-if="shopStatusCode === 0" size="small" @click="renzheng">立即认证</el-button>
+        <el-button v-if="shopStatusCode === 2" disabled="" size="small">等待审核</el-button>
       </el-col>
     </el-row>
     <el-row v-if="xiaochengxuStatusCode !== 1" class="header" style="margin-top: 20px;">
