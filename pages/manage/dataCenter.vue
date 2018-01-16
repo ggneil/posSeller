@@ -236,7 +236,6 @@
             </el-table-column>
             <el-table-column
               width="180"
-              sortable
               prop="sellNum"
               label="卖出件数">
             </el-table-column>
