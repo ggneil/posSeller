@@ -38,7 +38,7 @@
         <el-row class="navTitle">
           <p>认证信息</p>
           <p class="pl">{{ shopStatus }}</p>
-          <el-button class="pl" :disabled="shopStatusBtn" @click="shengqingrenzheng" type="primary" size="small">{{ shopStatus }}</el-button>
+          <el-button class="pl" :disabled="shopStatusBtn" @click="shengqingrenzheng" type="primary" size="small">{{ shopStatus === '认证未通过' ? '重新认证' : shopStatus}}</el-button>
         </el-row>
       </div>
       <el-row type="flex" justify="center" v-show="changeInfo">
@@ -640,6 +640,12 @@
             } else if (res.data.shop[0].auth_status === 2) {
               this.shopStatus = '认证中'
               this.shopStatusBtn = true
+            } else if (res.data.shop[0].auth_status === null) {
+              this.shopStatus = '未认证'
+              this.shopStatusBtn = false
+            } else if (res.data.shop[0].auth_status === 0) {
+              this.shopStatus = '认证未通过'
+              this.shopStatusBtn = false
             }
             var url = 'https://cdn.wangdoukeji.com/'
             this.shopInfo = {

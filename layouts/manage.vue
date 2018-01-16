@@ -15,10 +15,10 @@
               placement="top"
               width="160"
               v-model="visible2">
-              <p>您的店铺{{verification === '已认证' ? '已认证' : '尚未认证'}}</p>
+              <p>认证状态：{{verification}}</p>
               <div style="text-align: right; margin: 0">
-                <el-button type="primary" v-if="verification === '已认证'" size="mini" @click="dianpuxinxi">查看资料</el-button>
-                <el-button type="primary" v-if="verification === '未认证'" size="mini" @click="renzheng">去认证</el-button>
+                <el-button type="primary" v-if="(verification === '已认证' || verification === '审核中')" size="mini" @click="dianpuxinxi">查看资料</el-button>
+                <el-button type="primary" v-if="(verification === '未认证' || verification === '未通过')" size="mini" @click="renzheng">去认证</el-button>
               </div>
             </el-popover>
             <span v-popover:popover5 class="verification" style="outline: none;cursor: pointer;" :style="verification === '已认证' ? 'background-color: #f85;' : 'background-color: #ccc;'">{{verification}}</span>
@@ -109,8 +109,14 @@ export default {
       if (res.data.data.shop_auth_status === 1) {
         this.verification = '已认证'
         this.shopStatusCode = 1
-      } else {
+      } else if (res.data.data.shop_auth_status === null) {
         this.verification = '未认证'
+        this.shopStatusCode = null
+      } else if (res.data.data.shop_auth_status === 2) {
+        this.verification = '审核中'
+        this.shopStatusCode = 2
+      } else if (res.data.data.shop_auth_status === 0) {
+        this.verification = '未通过'
         this.shopStatusCode = 0
       }
     })
