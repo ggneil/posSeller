@@ -174,79 +174,133 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="商品分析" name="second">
-        <el-row class="bgwhite touhenglan">
-          <el-col :span="4" class="txtcenter">时间筛选：</el-col>
-          <el-col :span="20">
-            <el-row :gutter="20">
-              <el-col :span="6">
-                <el-select v-model="dayValue" placeholder="请选择" @change="handleChange" size="small">
-                  <el-option
-                    v-for="item in dayOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="6">
-                <div class="block" v-show="show">
-                  <el-date-picker
-                    v-model="dateValue4"
-                    align="right"
-                    type="date"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    @change="timeChange3"
-                    placeholder="选择日期"
-                    :editable="false"
-                    size="small"
-                    :picker-options="pickerOptions1">
-                  </el-date-picker>
-                </div>
-                <div class="block" v-show="!show">
-                  <el-date-picker
-                    v-model="dateValue5"
-                    type="daterange"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    @change="timeChange3"
-                    align="right"
-                    placeholder="选择日期范围"
-                    :editable="false"
-                    size="small"
-                    :picker-options="pickerOptions0">
-                  </el-date-picker>
-                </div>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-        <el-row class="footLine" style="padding: 0 20px;background-color: white;margin-bottom: 30px">
+        <div v-show="goodsShow">
+          <el-row class="bgwhite touhenglan">
+            <el-col :span="4" class="txtcenter">时间筛选：</el-col>
+            <el-col :span="20">
+              <el-row :gutter="20">
+                <el-col :span="6">
+                  <el-select v-model="dayValue" placeholder="请选择" @change="handleChange" size="small">
+                    <el-option
+                      v-for="item in dayOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-col>
+                <el-col :span="6">
+                  <div class="block" v-show="show">
+                    <el-date-picker
+                      v-model="dateValue4"
+                      align="right"
+                      type="date"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      @change="timeChange3"
+                      placeholder="选择日期"
+                      :editable="false"
+                      size="small"
+                      :picker-options="pickerOptions1">
+                    </el-date-picker>
+                  </div>
+                  <div class="block" v-show="!show">
+                    <el-date-picker
+                      v-model="dateValue5"
+                      type="daterange"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      @change="timeChange3"
+                      align="right"
+                      placeholder="选择日期范围"
+                      :editable="false"
+                      size="small"
+                      :picker-options="pickerOptions0">
+                    </el-date-picker>
+                  </div>
+                </el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+          <el-row class="footLine" style="padding: 0 20px;background-color: white;margin-bottom: 30px">
+            <el-table
+              :data="goodsTableData"
+              style="width: 100%;">
+              <el-table-column
+                prop="name"
+                label="商品名称"
+                width="200">
+              </el-table-column>
+              <el-table-column
+                prop="payPeopleNum"
+                label="订单数量"
+                sortable
+                width="200">
+              </el-table-column>
+              <el-table-column
+                width="200"
+                prop="sellNum"
+                sortable
+                label="卖出件数">
+              </el-table-column>
+              <el-table-column
+                prop="average"
+                label="平均（件/人）"
+                sortable
+                width="200">
+              </el-table-column>
+              <el-table-column
+                fixed="right"
+                label="操作"
+              >
+                <template scope="scope">
+                  <el-button @click="goodsDetails(scope.row.goodsId)" size="small" type="primary">查看详情</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-row>
+        </div>
+        <div v-show="!goodsShow">
           <el-table
-            :data="goodsTableData"
-            style="width: 100%;">
+            :data="goodsDetailsData"
+            style="width: 100%;"
+          >
             <el-table-column
-              prop="name"
-              label="商品名称"
-              width="180">
+              width="200"
+              label="用户"
+              align="center"
+            >
+              <template scope="scope">
+                <img style="width:50px;height: 50px;" :src="scope.row.avatarurl !== '' ? scope.row.avatarurl : ''" alt="">
+                <p>{{ scope.row.nickname }}</p>
+                <p v-if="scope.row.avatarurl === '' || scope.row.nickname === ''">部分信息未取到</p>
+              </template>
             </el-table-column>
             <el-table-column
-              prop="payPeopleNum"
-              label="付款人数"
+              width="200"
               sortable
-              width="180">
-            </el-table-column>
+              prop="goods_num"
+              label="购买份数"
+            ></el-table-column>
             <el-table-column
-              width="180"
-              prop="sellNum"
-              label="卖出件数">
-            </el-table-column>
+              width="200"
+              prop="pay_type"
+              label="支付方式"
+            ></el-table-column>
             <el-table-column
-              prop="average"
-              label="平均（件/人）"
+              width="200"
+              prop="create_time"
               sortable
-              width="180">
+              label="支付时间"
+            ></el-table-column>
+            <el-table-column
+              fixed="right"
+              label="操作"
+            >
+              <template scope="scope">
+                <el-button @click="customerData(scope.row.user_id)" size="small" type="primary">查看详情</el-button>
+              </template>
             </el-table-column>
           </el-table>
-        </el-row>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -279,12 +333,14 @@
           name: '茄子',
           payPeopleNum: 1,
           sellNum: 0,
-          average: 1
+          average: 1,
+          goodsId: 1
         }, {
           name: '辣椒',
           payPeopleNum: 0,
           sellNum: 1,
-          average: 0
+          average: 0,
+          goodsId: 2
         }],
         // 时间段选择
         pickerOptions0: {
@@ -391,7 +447,9 @@
         yesterdayOrderNum: 0, // 昨日订单数
         yesterdayMoney: '0.00', // 昨日钱数
         time: timerFirst.getFullYear() + '-' + (timerFirst.getMonth() + 1) + '-' + timerFirst.getDate() + '  ' + timerFirst.getHours() + '：' + timerFirst.getMinutes() + '：' + timerFirst.getSeconds(), // 时间
-        activeName: 'first' // 第一个显示 商品管理
+        activeName: 'first', // 第一个显示 商品管理
+        goodsShow: true, // 显示商品人数详情
+        goodsDetailsData: [] // 商品分析详情数组
       }
     },
     beforeMount () {
@@ -470,7 +528,8 @@
                 name: res.data.ga[keys].goods_name,
                 payPeopleNum: res.data.ga[keys].pay_ren_shu,
                 sellNum: res.data.ga[keys].num,
-                average: res.data.ga[keys].ren_jun
+                average: res.data.ga[keys].ren_jun,
+                goodsId: res.data.ga[keys].goods_id
               })
             }
           }
@@ -537,8 +596,9 @@
         this.dayValue = '选项1' // 多选框时间
         this.MonthValue = '选项1' // 多选框时间
         var timer = new Date()
-        this.time = timer.getFullYear() + '-' + timer.getMonth() + '-' + timer.getDate() + '  ' + timer.getHours() + '：' + timer.getMinutes() + '：' + timer.getSeconds()
+        this.time = timer.getFullYear() + '-' + (timer.getMonth() + 1) + '-' + timer.getDate() + '  ' + timer.getHours() + '：' + timer.getMinutes() + '：' + timer.getSeconds()
         this.pageLoad()
+        this.goodsShow = true
       },
       // 日期选择下拉框改变事件
       handleChange (label) {
@@ -551,6 +611,24 @@
           this.dateValue1 = '' // 自定义日期
           this.dateValue4 = '' // 自定义日期
         }
+      },
+      goodsDetails (goodsId) {
+        console.log(goodsId)
+        axios.post('/seller/Data/goodsPayment?goods_id=' + goodsId).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.goodsDetailsData = []
+            this.goodsDetailsData = res.data
+            this.goodsShow = false
+          }
+        })
+      },
+      customerData (userId) {
+        this.$router.push({path: '/manage/userDetails?user_id=' + userId})
       }
     }
   }

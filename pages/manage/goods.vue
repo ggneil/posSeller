@@ -115,6 +115,22 @@
               <el-form-item label="价格：" prop="price">
                 <el-input type="number" v-model="formAddGoods.price" placeholder="00.00"></el-input>
               </el-form-item>
+              <el-form-item
+                v-for="(domain, index) in formAddGoods.domains"
+                :label="'规格'"
+                :key="domain.key"
+                :prop="'domains.' + index + '.value'"
+                :rules="{
+                  required: true, message: '规格不能为空', trigger: 'blur'
+                }"
+              >
+                <el-input v-model="domain.value" placeholder="规格" class="spec specInput"></el-input>
+                <el-input v-model="domain.value" placeholder="价格" class="spec specInput"></el-input>
+                <el-button @click.prevent="removeDomain(domain)" class="spec specDelete">删除</el-button>
+              </el-form-item>
+              <el-form-item class="specAdd">
+                <el-button @click="addDomain" type="primary">添加规格</el-button>
+              </el-form-item>
               <el-form-item label="餐盒费：" prop="boxPrice">
                 <el-input type="number" v-model="formAddGoods.boxPrice" placeholder="00.00"></el-input>
               </el-form-item>
@@ -256,7 +272,11 @@
           price: '',
           boxPrice: '',
           num: '',
-          group: []
+          group: [],
+          // 规格
+          domains: [{
+            value: ''
+          }]
         },
         // 表格
         tableData: [],
@@ -283,6 +303,19 @@
       }
     },
     methods: {
+      // 规格
+      removeDomain (item) {
+        var index = this.formAddGoods.domains.indexOf(item)
+        if (index !== -1) {
+          this.formAddGoods.domains.splice(index, 1)
+        }
+      },
+      addDomain () {
+        this.formAddGoods.domains.push({
+          value: '',
+          key: Date.now()
+        })
+      },
       // 搜索商品
       searchGoods (value1) {
         axios.post('/seller/Goods/queryGoods', { key: value1, shop_id: this.shopId }).then((res) => {
@@ -784,6 +817,12 @@
     width: 80px;
     height: 80px;
     display: block;
+  }
+  /* 规格input */
+  .specInput {
+    float: left;
+    width: 25%;
+    margin-right: 5%;
   }
   /*图片上传结束*/
  .el-tabs__header{margin-bottom: 0}

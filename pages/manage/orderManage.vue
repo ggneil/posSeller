@@ -18,10 +18,10 @@
 				  </el-tabs>
 					<div class="order_list">
 						<el-table ref="multipleTable" :data="tableData3" border tooltip-effect="dark" style="width: 100%">
-							<el-table-column prop="order_number" label="订单号" width="180"></el-table-column>
+							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
-							<el-table-column prop="money_number" label="金额" width="80"></el-table-column>
+							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
 							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="120"></el-table-column>
@@ -29,6 +29,7 @@
 							<el-table-column label="操作" show-overflow-tooltip>
 								<template scope="scope">
 									<el-button @click="{orderWatch(scope.row), dialogTableVisible=true}" type="text" size="small">查看</el-button>
+									<el-button v-show="orderPaidBtn" @click="orderUpdate(scope.row)" type="text" size="small">已支付</el-button>
 									<el-button v-show="orderRemoveBtn" @click="orderRemove(scope.row)" type="text" size="small">移除订单</el-button>
 								</template>
 							</el-table-column>
@@ -63,10 +64,10 @@
 				  </el-tabs>
 					<div class="order_list">
 						<el-table ref="multipleTable1" :data="tableData4" border tooltip-effect="dark" style="width: 100%">
-							<el-table-column prop="order_number" label="订单号" width="180"></el-table-column>
+							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
-							<el-table-column prop="money_number" label="金额" width="80"></el-table-column>
+							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
 							<el-table-column prop="tableNo" label="桌号" width="80"></el-table-column>
 							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
@@ -75,7 +76,8 @@
 							<el-table-column label="操作" show-overflow-tooltip>
 								<template scope="scope">
 									<el-button @click="{orderWatch(scope.row), dialogTableVisible1=true}" type="text" size="small">查看</el-button>
-									<el-button v-show="orderRemoveBtn1" @click="orderRemove(scope.row)" type="text" size="small">移除订单</el-button>
+									<!-- <el-button v-show="orderPaidBtn1" @click="orderUpdate(scope.row)" type="text" size="small">已支付</el-button> -->
+                  <el-button v-show="orderRemoveBtn1" @click="orderRemove(scope.row)" type="text" size="small">移除订单</el-button>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -109,10 +111,10 @@
 				  </el-tabs>
 					<div class="order_list">
 						<el-table ref="multipleTable2" :data="tableData5" border tooltip-effect="dark" style="width: 100%">
-							<el-table-column prop="order_number" label="订单号" width="180"></el-table-column>
+							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="80"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="80" show-overflow-tooltip></el-table-column>
-							<el-table-column prop="money_number" label="金额" width="80"></el-table-column>
+							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
 							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="110"></el-table-column>
@@ -121,6 +123,7 @@
 							<el-table-column label="操作" show-overflow-tooltip>
 								<template scope="scope">
 									<el-button @click="{orderWatch(scope.row), dialogTableVisible2=true}" type="text" size="small">查看</el-button>
+									<el-button v-show="orderPaidBtn2" @click="orderUpdate(scope.row)" type="text" size="small">已支付</el-button>
 									<el-button v-show="orderRemoveBtn2" @click="orderRemove(scope.row)" type="text" size="small">移除订单</el-button>
 								</template>
 							</el-table-column>
@@ -154,6 +157,9 @@ export default {
   data () {
     return {
       shopId: '',
+      orderPaidBtn: false,
+      orderPaidBtn1: false,
+      orderPaidBtn2: false,
       orderRemoveBtn: false,
       orderRemoveBtn1: false,
       orderRemoveBtn2: false,
@@ -552,6 +558,11 @@ export default {
           for (var keys in res.data.order) {
             if (res.data.order[keys].status === 0) {
               payStatus = '未付款'
+              if (res.data.order[keys].pay_type !== 1) {
+                this.orderPaidBtn1 = true
+              } else {
+                this.orderPaidBtn1 = false
+              }
             } else {
               payStatus = '已付款'
             }

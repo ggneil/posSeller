@@ -138,7 +138,31 @@
               v-model="shopInfo.address"
               placeholder="请输入详细地址">
             </el-input>
-          </el-form-item> 
+          </el-form-item>
+          <el-form-item prop="comment" label="店铺介绍"
+            :rules="[
+              { required: true, message: '请输入店铺介绍' },
+              { max: 150, message: '店铺介绍最多150个字', trigger: 'blur' }
+            ]">
+            <el-input
+              v-model="shopInfo.comment"
+              type="textarea"
+              :autosize="{ minRows: 4, maxRows: 4}"
+              placeholder="请输入店铺介绍">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="店铺图片">
+              (推荐尺寸：750x400)
+            <el-upload
+              class="avatar-uploader"
+              action="https://api.doudot.cn/api/Attachment/upload"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccessBanner"
+              :before-upload="beforeAvatarUploadBanner">
+              <img v-if="shopBannerUrl" :src="shopBannerUrl" class="avatar banner_avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon banner-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('shopInfo')">创建店铺</el-button>
           </el-form-item>
@@ -179,7 +203,8 @@
           address: '',
           addressId: '',
           cityOption: [],
-          imgId: ''
+          imgId: '',
+          comment: ''
         },
         deleteBtn: false,
         addIndex: 0,
@@ -190,6 +215,8 @@
         checkAll: true,
         isIndeterminate: true,
         logoUrl: '',
+        shopBannerUrl: '',
+        shopBannerImg: '',
         submit_loading: false,
         rules: {
           mobile: [{ validator: validateMobile, required: true, trigger: 'blur' }],
@@ -227,7 +254,7 @@
             console.log(this.shopInfo)
             var userId = localStorage.getItem('user_id')
             console.log(userId)
-            axios.post('/seller/Shop/create?user_id=' + userId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId).then((res) => {
+            axios.post('/seller/Shop/create?user_id=' + userId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId + '&comment=' + this.shopInfo.comment + '&banner_id=' + this.shopInfo.bannerId + '&banner_path=' + this.shopBannerImg).then((res) => {
               if (res.data.error) {
                 this.$message({
                   type: 'error',
@@ -293,7 +320,31 @@
           message: '图片上传成功'
         })
       },
+      // 店铺banner上传
+      handleAvatarSuccessBanner (res, file) {
+        this.shopBannerImg = res.path
+        this.shopBannerUrl = URL.createObjectURL(file.raw)
+        this.shopInfo.bannerId = res.id
+        this.$message({
+          type: 'success',
+          message: '图片上传成功'
+        })
+      },
       beforeAvatarUpload (file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isPNG = file.type === 'image/png'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传图片只能是 JPG 和 PNG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return (isJPG || isPNG) && isLt2M
+      },
+      // 店铺banner
+      beforeAvatarUploadBanner (file) {
         const isJPG = file.type === 'image/jpeg'
         const isPNG = file.type === 'image/png'
         const isLt2M = file.size / 1024 / 1024 < 2
@@ -393,10 +444,21 @@
     line-height: 78px;
     text-align: center;
   }
+  .banner-icon {
+    width: 380px;
+    height: 202px;
+  }
+  .banner-icon:before {
+    line-height: 202px;
+  }
   .avatar {
     width: 78px;
     height: 78px;
     display: block;
+  }
+  .banner_avatar {
+    width: 380px;
+    height: 202px;
   }
   .timeInp{
     margin-left: 20px;

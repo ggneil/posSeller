@@ -10,7 +10,7 @@
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">店铺Logo：</el-col>
-            <el-col :span="21"><img class="imgSize1" :src="shopInfo.logoUrl"></img></el-col>
+            <el-col :span="21"><img class="imgSize1" :src="shopInfo.logoUrl"/></el-col>
           </el-row>
           <el-row class="navBody">
             <el-col :span="2" offset="1">营业时间：</el-col>
@@ -176,7 +176,31 @@
                   v-model="shopInfo.address"
                   placeholder="请输入详细地址">
                 </el-input>
-              </el-form-item> 
+              </el-form-item>
+              <el-form-item prop="comment" label="店铺介绍"
+                :rules="[
+                  { required: true, message: '请输入店铺介绍' },
+                  { max: 150, message: '店铺介绍最多150个字', trigger: 'blur' }
+                ]"> 
+                <el-input
+                  v-model="shopInfo.comment"
+                  type="textarea"
+                  :autosize="{ minRows: 4, maxRows: 4}"
+                  placeholder="请输入店铺介绍">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="店铺图片">
+                  (推荐尺寸：750x400)
+                <el-upload
+                  class="avatar-uploader"
+                  action="https://api.doudot.cn/api/Attachment/upload"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccessBanner"
+                  :before-upload="beforeAvatarUploadBanner">
+                  <img v-if="shopInfo.shopBannerUrl" :src="shopInfo.shopBannerUrl" class="avatar banner_avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+              </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="submitForm('shopInfo')">保存</el-button>
               </el-form-item>
@@ -185,7 +209,7 @@
         </el-col>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="桌台管理" name="second">
+    <el-tab-pane v-if="!huadian" label="桌台管理" name="second">
       <div v-if="zhuowei">
         <el-row>
           <el-col style="padding-bottom: 10px;padding-left: 30px;padding-top: 10px;"><el-button type="primary" size="small" @click="buildzhuotai">添加桌位</el-button><el-button @click="zhuowei = !zhuowei" size="small">类型管理</el-button></el-col>
@@ -308,9 +332,6 @@
         <el-form :model="zhuotaiInfoEdit" ref="zhuotaiInfoEdit">
           <el-form-item
             prop="tag_id"
-            :rules="[
-              { required: true, message: '类型不能为空', trigger: 'blur' }
-            ]"
           >
             <el-select v-model="zhuotaiInfoEdit.tag_id" placeholder="请选择">
               <el-option
@@ -337,6 +358,19 @@
         </span>
       </el-dialog>
     </el-tab-pane>
+    <el-tab-pane label="首页轮播" name="third">
+      <el-upload
+        class="upload-demo"
+        action="https://api.doudot.cn/api/Attachment/upload"
+        :on-success="handSuccess"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :file-list="bannerUrl"
+        list-type="picture">
+        <el-button size="small" type="primary" class="up-btn">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb(推荐尺寸：750x400)</div>
+      </el-upload>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -358,6 +392,7 @@
         }
       }
       return {
+        huadian: false,
         deleteBtn: false,
         xiugaiGroup: 1,
         dialogVisible: false,
@@ -392,8 +427,10 @@
           endTime3: '',
           mobile: '',
           address: '',
-          cityOption: []
+          cityOption: [],
+          comment: ''
         },
+        bannerPath: '',
         morenCity: '',
         openTime1: '',
         openTime2: '',
@@ -411,15 +448,20 @@
         checkAll: true,
         isIndeterminate: true,
         logoUrl: '',
+        shopBannerUrl: '',
         submit_loading: false,
         rules: {
           mobile: [{ validator: validateMobile, required: true, trigger: 'blur' }],
           cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'change' }]
         },
-        zhuotai: [1, 4, 1, 3]
+        zhuotai: [1, 4, 1, 3],
+        bannerUrl: []
       }
     },
     beforeMount () {
+      if (localStorage.getItem('shopType') === '5') {
+        this.huadian = true
+      }
       this.shopId = localStorage.getItem('shop_id')
       // this.shopId = 1
       // this.userId = localStorage.getItem('user_id')
@@ -429,8 +471,27 @@
       this.shopInfoLoad()
       this.zhuotaiInfoLoad()
       this.zhuotaiGroupInfoLoad()
+      this.bannerList()
     },
     methods: {
+      // 轮播列表
+      bannerList () {
+        axios.post('/seller/banner/listBanner?shop_id=' + this.shopId).then((res) => {
+          if (res.data.code === 1) {
+            var bannerList = res.data.data
+            var banner = []
+            for (var i = 0; i < bannerList.length; i++) {
+              banner.push({ url: bannerList[i].img, img_id: bannerList[i].id })
+            }
+            this.bannerUrl = banner
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+          }
+        })
+      },
       // 新建类型
       build () {
         this.xiugaiGroup = 0
@@ -660,18 +721,24 @@
               mobile: res.data.shop[0].service_mobile,
               address: res.data.shop[0].address,
               imgId: res.data.shop[0].logo,
+              bannerId: res.data.shop[0].banner_id,
               addressId: res.data.shop[0].area[0].id,
               area: res.data.shop[0].area_id,
               logoUrl: url + res.data.shop[0].path.replace(/\\/, ''),
+              shopBannerUrl: url + res.data.shop[0].banner_path.replace(/\\/, ''),
+              comment: res.data.shop[0].comment,
               week: res.data.shop_time[0].week,
               cityOption: [res.data.shop[0].province[0].id, res.data.shop[0].city[0].id, res.data.shop[0].area[0].id]
             }
+            this.bannerPath = res.data.shop[0].path
             this.openTime1 = this.shopInfo.startTime1 + ' 至 ' + this.shopInfo.endTime1
             if (this.shopInfo.startTime2 === '0' && this.shopInfo.endTime2 === '0') {
               this.shopInfo.startTime2 = ''
               this.shopInfo.endTime2 = ''
               this.openTime2 = ''
             } else {
+              this.tianjia1 = true
+              this.addIndex = 1
               this.openTime2 = this.shopInfo.startTime2 + ' 至 ' + this.shopInfo.endTime2
             }
             if (this.shopInfo.startTime3 === '0' && this.shopInfo.endTime3 === '0') {
@@ -679,6 +746,8 @@
               this.shopInfo.endTime3 = ''
               this.openTime3 = ''
             } else {
+              this.tianjia2 = true
+              this.addIndex = 2
               this.openTime3 = this.shopInfo.startTime3 + ' 至 ' + this.shopInfo.endTime3
             }
             axios.post('/seller/shop/getaddress', { id: 0 }).then((res1) => {
@@ -716,7 +785,7 @@
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Shop/editShop?shop_id=' + this.shopId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId).then((res) => {
+            axios.post('/seller/shop/editShop?shop_id=' + this.shopId + '&shop_name=' + this.shopInfo.name + '&logo=' + this.shopInfo.imgId + '&banner_id=' + this.shopInfo.bannerId + '&start1=' + this.shopInfo.startTime1 + '&end1=' + this.shopInfo.endTime1 + '&start2=' + this.shopInfo.startTime2 + '&end2=' + this.shopInfo.endTime2 + '&start3=' + this.shopInfo.startTime3 + '&end3=' + this.shopInfo.endTime3 + '&service_mobile=' + this.shopInfo.mobile + '&address=' + this.shopInfo.address + '&week=' + this.shopInfo.checkedDay.join(',') + '&area_id=' + this.shopInfo.addressId + '&comment=' + this.shopInfo.comment + '&banner_path=' + this.bannerPath).then((res) => {
               if (res.data.error) {
                 this.$message({
                   type: 'error',
@@ -748,6 +817,12 @@
         this.shopInfo.logoUrl = URL.createObjectURL(file.raw)
         this.shopInfo.imgId = res.id
       },
+      // 店铺banner上传
+      handleAvatarSuccessBanner (res, file) {
+        this.bannerPath = res.path
+        this.shopInfo.shopBannerUrl = URL.createObjectURL(file.raw)
+        this.shopInfo.bannerId = res.id
+      },
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
         const isPNG = file.type === 'image/png'
@@ -760,6 +835,20 @@
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
         return isJPG && isLt2M
+      },
+      // 店铺banner
+      beforeAvatarUploadBanner (file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isPNG = file.type === 'image/png'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传图片只能是 JPG 和 PNG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return (isJPG || isPNG) && isLt2M
       },
       handleCheckAllChange (value) {
         this.shopInfo.checkedDay = value ? dayOptions : []
@@ -863,6 +952,40 @@
             message: '已取消删除'
           })
         })
+      },
+      // 首页banner
+      handSuccess (response, file, fileList) {
+        axios.post('https://api.doudot.cn/seller/banner/addbanner?shop_id=' + this.shopId + '&img_id=' + response.id + '&img=' + response.path).then((res) => {
+          if (res.data.code === 1) {
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            })
+            this.bannerList()
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+            this.bannerList()
+          }
+        })
+      },
+      handleRemove (file, fileList) {
+        axios.post('https://api.doudot.cn/seller/banner/deleteBanner?id=' + file.img_id).then((res) => {
+          if (res.data.code === 1) {
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+            this.bannerList()
+          }
+        })
       }
     }
   }
@@ -899,10 +1022,21 @@
     line-height: 78px;
     text-align: center;
   }
+  .banner-icon {
+    width: 380px;
+    height: 202px;
+  }
+  .banner-icon:before {
+    line-height: 202px;
+  }
   .avatar {
     width: 78px;
     height: 78px;
     display: block;
+  }
+  .el-upload .banner_avatar {
+    width: 380px;
+    height: 202px;
   }
   .timeInp{
     margin-left: 20px;
@@ -914,4 +1048,26 @@
   .zhuotai{margin-bottom: 20px;padding: 20px;background: white;box-shadow: 0 10px 16px -10px rgba(0, 0, 0, 0.7);border-radius: 4px;}
   .zhuotai p{margin: 5px;}
   .zhuotaiContent{background-color: #eee;padding-top: 20px;padding-left: 30px;}
+    /* 轮播 */
+  #pane-third {
+    padding: 10px 30px 0;
+  }
+  .el-upload-list__item {
+    width: 420px;
+    height: 242px;
+    float: left;  
+  }
+  .el-upload-list--picture .el-upload-list__item {
+    padding: 20px;
+    height: auto;
+  }
+  .el-upload-list--picture .el-upload-list__item-thumbnail {
+    width: 380px;
+    height: 202px;
+    margin-left: 0px;
+  }
+  .upload-demo {
+    padding-left: 20px;
+    padding-top: 10px;
+  }
 </style>

@@ -151,7 +151,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="积分管理" name="second">
+      <!-- <el-tab-pane label="积分管理" name="second">
         <el-row class="henglan">
           <el-col :span="10">
             <el-select class="Inp" v-model="value1" placeholder="请选择" @change="handleStatusSelect1">
@@ -211,7 +211,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
     
   </div>
@@ -222,7 +222,7 @@
   var zhuangtai = ''
   var zhuangtaiBtn = ''
   var goods = ''
-  var url = 'https://cdn.wangdoukeji.com/'
+  var url = 'https://api.doudot.cn/'
   function timer (aaa) {
     return new Date(parseInt(aaa) * 1000).toLocaleString().replace(/年|月/g, '-').replace(/日/g, ' ')
   }
