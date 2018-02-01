@@ -17,7 +17,7 @@
           <div class="bottom clearfix">
             <time class="time">营业状态：{{shopInfo[index].operating}}</time>
             <el-button type="text" @click="open1(shopInfo[index].shopId, shopInfo[index].name)" class="button">进入店铺</el-button>
-            <el-button type="text" @click="open2(shopInfo[index].shopId, index)" style="color:red;" class="button">删除</el-button>
+            <el-button type="text" @click="open2(shopInfo[index].shopId, index)" style="color:red;" class="button" v-show="shopInfo[index].role === 1">删除</el-button>
           </div>
         </div>
       </el-card>
@@ -61,14 +61,16 @@
                     name: res.data.shop_list[keys].name,
                     shopId: res.data.shop_list[keys].shop_id,
                     logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
-                    operating: '营业中'
+                    operating: '营业中',
+                    role: res.data.shop_list[keys].role
                   })
                 } else {
                   this.shopInfo.push({
                     name: res.data.shop_list[keys].name,
                     shopId: res.data.shop_list[keys].shop_id,
                     logoUrl: url + res.data.shop_list[keys].logo.replace(/\\/, ''),
-                    operating: '已打烊'
+                    operating: '已打烊',
+                    role: res.data.shop_list[keys].role
                   })
                 }
               }

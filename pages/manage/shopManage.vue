@@ -57,7 +57,7 @@
               <el-form-item label="店铺LOGO">
                 <el-upload
                   class="avatar-uploader"
-                  action="https://cdn.wangdoukeji.com/api/Attachment/upload"
+                  action="https://api.doudot.cn/api/Attachment/upload"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
@@ -371,12 +371,194 @@
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb(推荐尺寸：750x400)</div>
       </el-upload>
     </el-tab-pane>
+    <el-tab-pane label="管理员" name="fourth" class="container">
+      <div v-show="show">
+        <el-row class="henglan">
+          <el-col :span="2">
+            <el-button class="btn1" type="primary" @click="newUser">添加管理员</el-button>
+          </el-col>
+        </el-row>
+        <el-table
+          :data="tableUserData"
+          style="width: 100%">
+          <el-table-column
+            prop="user_name"
+            label="管理员账号"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="140">
+          </el-table-column>
+          <el-table-column
+            prop="mobile"
+            label="联系方式">
+          </el-table-column>
+          <el-table-column
+            prop="add_user_id"
+            label="添加人">
+          </el-table-column>
+          <el-table-column
+            prop="create_time"
+            label="添加时间"
+            width="200">
+          </el-table-column>
+          <el-table-column
+            prop="role"
+            label="角色/权限">
+          </el-table-column>
+          <el-table-column
+            prop="operation"
+            label="操作">
+              <template scope="scope">
+                <el-row v-show="scope.row.operation !== '1'">
+                  {{ scope.row.operation }}
+                </el-row>
+                <el-button
+                  v-show="scope.row.operation === '1'"
+                  size="small"
+                  @click="userDataEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button
+                  v-show="scope.row.operation === '1'"
+                  size="small"
+                  type="danger"
+                  @click="userDelete(scope.row)">删除</el-button>
+              </template>
+          </el-table-column>
+        </el-table>
+        <p class="user-prompt prompt_one">普通管理员：具备绝大部分管理权限，不能添加、删除其他管理员、不能删除店铺</p>
+        <p class="user-prompt">高级管理员：具备一切管理权限，包含删除其他管理员帐号、删除店铺等权限</p>
+      </div>
+      <div v-show="!show">
+        <el-row class="henglanIn">
+          <el-col :span="4">管理员 / 添加管理员</el-col>
+        </el-row>
+        <div class="bgWhite">
+          <!--添加商品表单-->
+          <el-form label-width="95px" :model="formAddUser" class="addUserFrom" :rules="rules" ref="formAddUser">
+            <el-form-item label="豆点账号：" prop="admin">
+              <el-input v-model="formAddUser.admin" placeholder="" class="addUser" :disabled="formAddUser.fromId !== ''"></el-input>
+            </el-form-item>
+            <el-form-item label="员工姓名：" prop="name">
+              <el-input v-model="formAddUser.name" placeholder="" class="addUser"></el-input>
+            </el-form-item>
+            <el-form-item label="联系方式：" prop="phone">
+              <el-input v-model="formAddUser.phone" placeholder="" class="addUser"></el-input>
+            </el-form-item>
+            <el-form-item label="角色权限：" prop="group">
+              <template>
+                <el-radio v-model="formAddUser.radio" label="1">高级管理员</el-radio>
+                <el-radio v-model="formAddUser.radio" label="2">普通管理员</el-radio>
+                <p class="user-prompt prompt_one prompt_in">普通管理员：具备绝大部分管理权限，不能添加、删除其他管理员、不能删除店铺</p>
+                <p class="user-prompt prompt_in">高级管理员：具备一切管理权限，包含删除其他管理员帐号、删除店铺等权限</p>
+              </template>
+            </el-form-item>
+            <el-button v-show="showBtn" type="primary" class="btn2" @click="addUserAdmin('formAddUser')">添加管理员</el-button>
+            <el-button v-show="!showBtn" type="primary" class="btn2 btnEdit" @click="editUserAdmin('formAddUser', formAddUser.fromId)">编辑管理员</el-button>
+          </el-form>
+        </div>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="打印机" name="Fifth" class="container">
+      <el-row class="henglan">
+        <el-col :span="2">
+          <el-button class="btn1" type="primary" @click="newPrinterBtn">新建打印机</el-button>
+        </el-col>
+      </el-row>
+      <el-table
+        :data="printerListData"
+        style="width: 100%">
+        <el-table-column
+          prop="printerName"
+          label="打印机"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="brand"
+          label="类型"
+          width="140">
+        </el-table-column>
+        <el-table-column
+          prop="printerNumber"
+          label="设备号码">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="状态">
+        </el-table-column>
+        <el-table-column
+          prop="operation"
+          label="操作">
+            <template scope="scope">
+              <el-button
+                size="small"
+                @click="printerDataEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click="printerDelete(scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+      </el-table>
+      <el-dialog title="打印机" :visible.sync="dialogFormVisible" class="printerModel">
+        <p class="printer_p">PC仅支持连接WiFi打印机，蓝牙打印机请使用App连接。</p>
+        <p class="printer_p">请确保WiFi打印机已连接网络。</p>
+        <el-form :model="newPrinter" :label-width="formLabelWidth" :rules="rules" ref="newPrinter">
+          <el-form-item label="设置品名:">
+            <template>
+              <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="1">365</el-radio>
+              <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="2">飞鹏</el-radio>
+              <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="3">易联云(不支持K1/K2/K3)</el-radio>
+            </template>
+          </el-form-item>
+          <el-form-item label="设备名称:" prop="printerName">
+            <el-input v-model="newPrinter.printerName" placeholder="输入名称，如厨房打印机" class="addUser"></el-input>
+          </el-form-item>
+          <el-form-item label="设备号码:" prop="printerMobile">
+            <el-input :disabled="editDisabled" v-model="newPrinter.printerMobile" placeholder="输入设备底部的机器号" class="addUser"></el-input>
+          </el-form-item>
+          <el-form-item label="设备密钥:" prop="printerPassworld">
+            <el-input :disabled="editDisabled" v-model="newPrinter.printerPassworld" placeholder="输入密钥" class="addUser"></el-input>
+          </el-form-item>
+          <el-form-item label="打印数量:">
+            <template>
+              <el-radio v-model="newPrinter.numberRadio" label="1">1张</el-radio>
+              <el-radio v-model="newPrinter.numberRadio" label="2">2张</el-radio>
+              <el-radio v-model="newPrinter.numberRadio" label="3">3张</el-radio>
+              <el-radio v-model="newPrinter.numberRadio" label="4">4张</el-radio>
+            </template>
+          </el-form-item>
+          <el-form-item label="打印显示:">
+            <template>
+              <el-radio v-model="newPrinter.showRadio" label="1">按下单顺序打印菜品</el-radio>
+              <el-radio v-model="newPrinter.showRadio" label="2">按商品分组打印菜品</el-radio>
+            </template>
+          </el-form-item>
+          <el-form-item label="打印支持:">
+            <template>
+              <el-checkbox-group 
+                v-model="newPrinter.checkedCities"
+                :min="1">
+                <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+              </el-checkbox-group>
+            </template>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button class="printerBtnModel" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button class="printerBtnModel" v-show="printerBtnShow" type="primary" @click="addPrinter('newPrinter')">确 定</el-button>
+          <el-button class="printerBtnModel" v-show="!printerBtnShow" type="primary" @click="editPrinter('newPrinter', newPrinter.id)">确 定</el-button>
+        </div>
+      </el-dialog>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
   import axios from '../../plugins/axios'
   const dayOptions = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  const printerOptions = ['外卖订单', '堂食订单', '扫码买单订单']
   export default {
     layout: 'manage',
     data () {
@@ -386,6 +568,17 @@
         } else {
           if (!/^1\d{10}$/.test(value)) {
             callback(new Error('请输入正确的手机号码'))
+          } else {
+            callback()
+          }
+        }
+      }
+      var validatePhone = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入联系方式'))
+        } else {
+          if (!/^1\d{10}$/.test(value)) {
+            callback(new Error('请输入正确的联系方式'))
           } else {
             callback()
           }
@@ -452,10 +645,50 @@
         submit_loading: false,
         rules: {
           mobile: [{ validator: validateMobile, required: true, trigger: 'blur' }],
-          cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'change' }]
+          cityOption: [{ type: 'array', required: true, message: '请选择城市', trigger: 'change' }],
+          // 添加管理员的表单验证
+          admin: [{ validator: validateMobile, required: true, trigger: 'blur' }],
+          phone: [{ validator: validatePhone, required: true, trigger: 'blur' }],
+          name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+          // 打印机的表单验证
+          printerName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+          printerMobile: [{ required: true, message: '请输入设备号', trigger: 'blur' }],
+          printerPassworld: [{ required: true, message: '请输入密钥', trigger: 'blur' }]
         },
         zhuotai: [1, 4, 1, 3],
-        bannerUrl: []
+        bannerUrl: [],
+        // 管理员表格
+        tableUserData: [],
+        // 管理员添加表单数据
+        formAddUser: {
+          formId: '',
+          admin: '',
+          name: '',
+          phone: '',
+          radio: '1'
+        },
+        show: true,
+        showBtn: true,
+        // 打印机列表
+        printerListData: [],
+        // 新建打印机表单
+        dialogFormVisible: false,
+        newPrinter: {
+          id: '',
+          printerName: '',
+          printerMobile: '',
+          printerPassworld: '',
+          brandRadio: '1',
+          numberRadio: '1',
+          showRadio: '1',
+          checkedCities: ['外卖订单', '堂食订单', '扫码买单订单']
+        },
+        // label的宽
+        formLabelWidth: '120px',
+        // 多选
+        cities: printerOptions,
+        printerBtnShow: true,
+        editDisabled: false
       }
     },
     beforeMount () {
@@ -463,8 +696,7 @@
         this.huadian = true
       }
       this.shopId = localStorage.getItem('shop_id')
-      // this.shopId = 1
-      // this.userId = localStorage.getItem('user_id')
+      this.userId = localStorage.getItem('user_id')
       if (this.$route.query.id) {
         this.activeName = 'second'
       }
@@ -472,11 +704,258 @@
       this.zhuotaiInfoLoad()
       this.zhuotaiGroupInfoLoad()
       this.bannerList()
+      // 添加管理员列表加载
+      this.addUserData()
+      // 打印机列表加载
+      this.printerList()
     },
     methods: {
+      // 添加管理员
+      newUser () {
+        this.formAddUser.fromId = ''
+        this.formAddUser.admin = ''
+        this.formAddUser.name = ''
+        this.formAddUser.phone = ''
+        this.formAddUser.radio = '1'
+        this.showBtn = true
+        this.show = false
+      },
+      // 管理员列表数据
+      addUserData () {
+        axios.post('https://api.doudot.cn/seller/shop/admin?shop_id=' + this.shopId + '&user_id=' + this.userId).then((res) => {
+          if (res.data.code === 1) {
+            console.log(res.data.data)
+            this.tableUserData = []
+            this.tableUserData = res.data.data
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            })
+          }
+        })
+      },
+      // 添加管理员
+      addUserAdmin (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('https://api.doudot.cn/seller/shop/addadmin?shop_id=' + this.shopId + '&add_user_id=' + this.userId + '&user_name=' + this.formAddUser.admin + '&name=' + this.formAddUser.name + '&mobile=' + this.formAddUser.phone + '&role=' + this.formAddUser.radio).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '添加成功'
+                })
+                this.show = true
+                this.addUserData()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              }
+            })
+          }
+        })
+      },
+      // 编辑管理员信息
+      userDataEdit (index, row) {
+        axios.post('https://api.doudot.cn/seller/shop/editadmin', { id: row.id, user_id: this.userId, shop_id: this.shopId }).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            console.log(res.data)
+            this.formAddUser.fromId = res.data.data.id
+            this.formAddUser.admin = res.data.data.user_name
+            this.formAddUser.name = res.data.data.name
+            this.formAddUser.phone = res.data.data.mobile
+            var radioItem = (res.data.data.role).toString()
+            this.formAddUser.radio = radioItem
+            this.showBtn = false
+            this.show = false
+          }
+        })
+      },
+      // 修改管理员
+      editUserAdmin (formName, id) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('https://api.doudot.cn/seller/shop/doedit?id=' + id + '&name=' + this.formAddUser.name + '&mobile=' + this.formAddUser.phone + '&role=' + this.formAddUser.radio).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: res.data.msg
+                })
+                this.show = true
+                this.addUserData()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              }
+            })
+          }
+        })
+      },
+      // 删除管理员
+      userDelete (row) {
+        this.$confirm('此操作将永久删除该管理员, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('https://api.doudot.cn/seller/shop/delAdmin', { id: row.id, user_id: this.userId, shop_id: this.shopId }).then((res) => {
+            if (res.data.error) {
+              console.log(res.data.error.msg)
+              this.$message({
+                type: 'error',
+                message: res.data.error.msg
+              })
+            } else {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.addUserData()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
+      // 新建打印机初始化
+      newPrinterBtn () {
+        this.newPrinter.printerName = ''
+        this.newPrinter.printerMobile = ''
+        this.newPrinter.printerPassworld = ''
+        this.newPrinter.brandRadio = '1'
+        this.newPrinter.numberRadio = '1'
+        this.newPrinter.showRadio = '1'
+        this.newPrinter.checkedCities = ['外卖订单', '堂食订单', '扫码买单订单']
+        this.dialogFormVisible = true
+        this.printerBtnShow = true
+        this.editDisabled = false
+      },
+      // 打印机列表
+      printerList () {
+        axios.post('https://api.doudot.cn/seller/printer/showPrinter?shop_id=' + this.shopId).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.printerListData = res.data.data
+            console.log(res.data.data)
+          }
+        })
+      },
+      // 添加打印机
+      addPrinter (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('https://api.doudot.cn/seller/printer/addprinter?shop_id=' + this.shopId + '&user_id=' + this.userId + '&brand=' + this.newPrinter.brandRadio + '&printerName=' + this.newPrinter.printerName + '&printerNumber=' + this.newPrinter.printerMobile + '&printerKey=' + this.newPrinter.printerPassworld + '&printQuantity=' + this.newPrinter.numberRadio + '&display=' + this.newPrinter.showRadio + '&support=' + this.newPrinter.checkedCities).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '添加成功'
+                })
+                this.dialogFormVisible = false
+                this.printerList()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              }
+            })
+          }
+        })
+      },
+      // 编辑打印机
+      printerDataEdit (index, row) {
+        axios.post('https://api.doudot.cn/seller/printer/editPrinter', { id: row.id }).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            console.log(res.data)
+            this.newPrinter.id = res.data.data.id
+            this.newPrinter.printerName = res.data.data.printerName
+            this.newPrinter.printerMobile = res.data.data.printerNumber
+            this.newPrinter.printerPassworld = res.data.data.printerKey
+            this.newPrinter.brandRadio = res.data.data.brand
+            this.newPrinter.numberRadio = res.data.data.printQuantity
+            this.newPrinter.showRadio = res.data.data.display
+            this.newPrinter.checkedCities = res.data.data.support.split(',')
+            this.dialogFormVisible = true
+            this.printerBtnShow = false
+            this.editDisabled = true
+          }
+        })
+      },
+      // 修改打印机
+      editPrinter (formName, id) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('https://api.doudot.cn/seller/printer/doedit?id=' + id + '&printerName=' + this.newPrinter.printerName + '&printQuantity=' + this.newPrinter.numberRadio + '&display=' + this.newPrinter.showRadio + '&support=' + this.newPrinter.checkedCities).then((res) => {
+              if (res.data.code === 1) {
+                this.$message({
+                  type: 'success',
+                  message: res.data.msg
+                })
+                this.dialogFormVisible = false
+                this.printerList()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
+              }
+            })
+          }
+        })
+      },
+      // 删除打印机
+      printerDelete (row) {
+        this.$confirm('此操作将永久删除该打印机, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios.post('https://api.doudot.cn/seller/printer/delPrinter', { id: row.id }).then((res) => {
+            if (res.data.error) {
+              console.log(res.data.error.msg)
+              this.$message({
+                type: 'error',
+                message: res.data.error.msg
+              })
+            } else {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.printerList()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
       // 轮播列表
       bannerList () {
-        axios.post('/seller/banner/listBanner?shop_id=' + this.shopId).then((res) => {
+        axios.post('https://api.doudot.cn/seller/banner/listBanner?shop_id=' + this.shopId).then((res) => {
           if (res.data.code === 1) {
             var bannerList = res.data.data
             var banner = []
@@ -514,7 +993,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.dialogVisible = false
-            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/editTag?tag_id=' + tagid + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
+            axios.post('https://api.doudot.cn/index.php/seller/Table/editTag?tag_id=' + tagid + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
               if (res.data.code === 1) {
                 that.$message({
                   type: 'success',
@@ -539,7 +1018,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.tianjiazhuotai = false
-            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/editTable?id=' + this.zhuotaiInfoEdit.id + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
+            axios.post('https://api.doudot.cn/index.php/seller/Table/editTable?id=' + this.zhuotaiInfoEdit.id + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
               if (res.data.code === 1) {
                 this.$message({
                   type: 'success',
@@ -564,7 +1043,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.dialogVisible = false
-            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/addTag?shop_id=' + this.shopId + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
+            axios.post('https://api.doudot.cn/index.php/seller/Table/addTag?shop_id=' + this.shopId + '&name=' + this.zhuotaiGroupInfoEdit.name + '&min=' + this.zhuotaiGroupInfoEdit.min + '&max=' + this.zhuotaiGroupInfoEdit.max).then((res) => {
               if (res.data.code === 1) {
                 this.$message({
                   type: 'success',
@@ -588,7 +1067,7 @@
       zhuotaibuildleixing (tagid, formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/addTable?shop_id=' + this.shopId + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
+            axios.post('https://api.doudot.cn/index.php/seller/Table/addTable?shop_id=' + this.shopId + '&table_id=' + this.zhuotaiInfoEdit.table_id + '&tag_id=' + this.zhuotaiInfoEdit.tag_id).then((res) => {
               if (res.data.code === 1) {
                 this.$message({
                   type: 'success',
@@ -611,7 +1090,7 @@
       },
       // 桌台类型信息
       zhuotaiGroupInfoLoad () {
-        axios.get('https://cdn.wangdoukeji.com/index.php/seller/table/tagsList?shop_id=' + this.shopId).then((res) => {
+        axios.get('https://api.doudot.cn/index.php/seller/table/tagsList?shop_id=' + this.shopId).then((res) => {
           if (res.data.code === 1) {
             this.zhuotaiGroupInfo = res.data.data
           } else {
@@ -624,7 +1103,7 @@
       },
       // 桌台信息
       zhuotaiInfoLoad () {
-        axios.get('https://cdn.wangdoukeji.com/index.php/seller/table/tableList?shop_id=' + this.shopId).then((res) => {
+        axios.get('https://api.doudot.cn/index.php/seller/table/tableList?shop_id=' + this.shopId).then((res) => {
           if (res.data.code === 1) {
             this.zhuotaiInfo = res.data.data
           } else {
@@ -708,7 +1187,7 @@
               this.shopStatus = '认证未通过'
               this.shopStatusBtn = false
             }
-            var url = 'https://cdn.wangdoukeji.com/'
+            var url = 'https://api.doudot.cn/'
             this.shopInfo = {
               name: res.data.shop[0].name,
               checkedDay: res.data.shop_time[0].week.split(','),
@@ -812,6 +1291,8 @@
         this.tianjia1 = false
         this.tianjia2 = false
         this.addIndex = 0
+        this.addUserData()
+        this.show = true
       },
       handleAvatarSuccess (res, file) {
         this.shopInfo.logoUrl = URL.createObjectURL(file.raw)
@@ -905,7 +1386,7 @@
           cancelButtonText: '取消',
           type: 'danger'
         }).then(() => {
-          axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/deleteTable?id=' + row.id).then((res) => {
+          axios.post('https://api.doudot.cn/index.php/seller/Table/deleteTable?id=' + row.id).then((res) => {
             if (res.data.code === 1) {
               this.$message({
                 type: 'success',
@@ -932,7 +1413,7 @@
           cancelButtonText: '取消',
           type: 'danger'
         }).then(() => {
-          axios.post('https://cdn.wangdoukeji.com/index.php/seller/Table/deleteTag?tag_id=' + row.tag_id).then((res) => {
+          axios.post('https://api.doudot.cn/index.php/seller/Table/deleteTag?tag_id=' + row.tag_id).then((res) => {
             if (res.data.code === 1) {
               this.$message({
                 type: 'success',
@@ -1069,5 +1550,63 @@
   .upload-demo {
     padding-left: 20px;
     padding-top: 10px;
+  }
+  /* 添加管理员 */
+  .henglan{padding: 10px 0px;border-bottom: 1px solid #eee;}
+  .henglanIn{padding: 10px 0px 10px; margin-bottom: 10px;border-bottom: 1px solid #eee;font-size: 14px; color: #555;}
+  .el-tabs__header {
+    margin: 0;
+  }
+  .btn1 {
+    font-size: 12px;
+    padding: 8px 13px;
+  }
+  .btn2 {
+    font-size: 12px;
+    padding: 8px 13px;
+    margin-left: 95px;
+  }
+  .btn2 + .btnEdit {
+    margin-left: 95px;
+  }
+  .container {
+    padding: 15px 20px 20px 10px;
+  }
+  .el-table td:first-child .cell, .el-table th:first-child .cell {
+    padding-left: 20px;
+  }
+  .addUser {
+    width: 200px;
+  }
+  .addUserFrom {
+    padding-left: 50px;
+    padding-top: 20px;
+  }
+  .user-prompt {
+    font-size: 12px;
+    color: #666;
+    padding-left: 10px;
+    margin: 5px 0;
+  }
+  .prompt_one {
+    margin-top: 20px;
+  }
+  .prompt_in {
+    line-height: 15px;
+    padding-left: 0;
+  }
+  /* 打印机模型弹框 */
+  .printerModel > .el-dialog {
+    width: 40%;
+    margin-top: 10vh;
+  }
+  .printer_p {
+    padding-left: 10px;
+    line-height: 16px;
+    font-size: 14px;
+  }
+  .printerBtnModel {
+    font-size: 13px;
+    padding: 8px 13px;
   }
 </style>

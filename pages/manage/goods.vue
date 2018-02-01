@@ -115,7 +115,7 @@
               <el-form-item label="价格：" prop="price">
                 <el-input type="number" v-model="formAddGoods.price" placeholder="00.00"></el-input>
               </el-form-item>
-              <el-form-item
+              <!-- <el-form-item
                 v-for="(domain, index) in formAddGoods.domains"
                 :label="'规格'"
                 :key="domain.key"
@@ -130,7 +130,7 @@
               </el-form-item>
               <el-form-item class="specAdd">
                 <el-button @click="addDomain" type="primary">添加规格</el-button>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="餐盒费：" prop="boxPrice">
                 <el-input type="number" v-model="formAddGoods.boxPrice" placeholder="00.00"></el-input>
               </el-form-item>

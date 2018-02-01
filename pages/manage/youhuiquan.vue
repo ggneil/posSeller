@@ -151,67 +151,6 @@
           </div>
         </div>
       </el-tab-pane>
-      <!-- <el-tab-pane label="积分管理" name="second">
-        <el-row class="henglan">
-          <el-col :span="10">
-            <el-select class="Inp" v-model="value1" placeholder="请选择" @change="handleStatusSelect1">
-              <el-option
-                v-for="item in options1"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <el-input class="Inp Inp2" v-model="input1" placeholder="搜索商品..." @change="searchGoods1"></el-input>
-          </el-col>
-        </el-row>
-        <el-table
-          :data="goodsData"
-          border
-          style="width: 100%">
-          <el-table-column
-            label="商品">
-            <template scope="scope">
-              <el-row>
-                <el-col :span="4">
-                  <img class="imgSize" :src="scope.row.ico"/>
-                </el-col>
-                <el-col :span="20">
-                  <el-row>
-                    <el-col>
-                      <span style="margin-left: 10px">{{ scope.row.name }}</span> 
-                    </el-col> 
-                  </el-row>
-                  <el-row>
-                    <el-col>
-                      <span style="margin-left: 10px">{{ scope.row.price }}</span>
-                    </el-col> 
-                  </el-row>
-                </el-col> 
-              </el-row>
-            </template>
-          </el-table-column>
-          <el-table-column label="积分开启/编辑">
-            <template scope="scope">
-              <el-button
-                disabled
-                :type="scope.row.integrationStatus === '积分兑换未开启' ? 'danger' : 'primary'"
-                size="small">{{ scope.row.integrationStatus }}</el-button>
-              <el-button
-                size="small"
-                @click="handleEdit3(scope.$index, scope.row)">{{ scope.row.integrationStatusBtn }}</el-button>
-              <el-button
-                :disabled="scope.row.integrationStatus === '积分兑换未开启' ? 'disabled' : false"
-                size="small"
-                @click="handleEdit4(scope.$index, scope.row)">设置积分</el-button>
-              <el-button
-                disabled
-                :type="scope.row.integrationStatus === '积分兑换未开启' ? '' : 'primary'"
-                size="small">{{ scope.row.integrationNum + '积分' }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane> -->
     </el-tabs>
     
   </div>
@@ -521,6 +460,10 @@
               if (res.data.error) {
                 console.log(res.data.error.msg)
                 console.log(this.formAddCoupon)
+                this.$message({
+                  type: 'error',
+                  message: res.data.error.msg
+                })
               } else {
                 this.timeQuantum = ''
                 this.formAddCoupon = {
