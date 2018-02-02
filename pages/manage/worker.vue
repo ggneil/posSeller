@@ -112,7 +112,7 @@
           <span class="tiao">新建优惠券</span>
         </el-col>
       </router-link>
-      <router-link :to="{path: '/manage/youhuiquan', query: {id: 2}}">
+      <router-link :to="{path: '/manage/youhuiquan'}">
         <el-col :span="6">
           <span class="ico jian">积</span>
           <span class="tiao">设置积分</span>

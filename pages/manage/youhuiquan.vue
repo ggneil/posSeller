@@ -26,7 +26,7 @@
                 style="width: 100%">
                 <el-table-column
                   label="券名"
-                  width="100">
+                  width="150">
                   <template scope="scope">
                     <el-row>
                       <el-col>

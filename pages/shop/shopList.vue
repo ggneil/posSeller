@@ -17,7 +17,7 @@
           <div class="bottom clearfix">
             <time class="time">营业状态：{{shopInfo[index].operating}}</time>
             <el-button type="text" @click="open1(shopInfo[index].shopId, shopInfo[index].name)" class="button">进入店铺</el-button>
-            <el-button type="text" @click="open2(shopInfo[index].shopId, index)" style="color:red;" class="button" v-show="shopInfo[index].role === 1">删除</el-button>
+            <el-button type="text" @click="open2(shopInfo[index].shopId, index)" style="color:red;" class="button" v-show="shopInfo[index].role !== 2">删除</el-button>
           </div>
         </div>
       </el-card>
