@@ -1,5 +1,13 @@
 <template>
   <div class="content">
+    <el-row class="header" style="margin-bottom: 10px" v-show="sub == 0">
+      <el-col :span="11">
+        您的店铺已打烊，订购服务可恢复使用
+      </el-col>
+      <el-col :span="4">
+        <el-button size="small" @click="subscribe">立即订购</el-button>
+      </el-col>
+    </el-row>
     <el-row class="header" :class="shopStatusCode ===  1 ? 'lv' : ''">
       <el-col :span="11"  v-if="shopStatusCode === null">店铺还未完成认证，当前处于打烊状态，认证后即可正常营业<br>
 咨询电话： 15611528199</el-col>
@@ -141,6 +149,7 @@
         xiaochengxuStatusCode: 1,
         shopStatus: null,
         shopStatusCode: null,
+        sub: 1,
         waimaikaiguan: false,
         todayVisitorNum: 0,
         todayBrowseNum: 0,
@@ -166,6 +175,7 @@
         this.kuaididiancan = '店内订单'
       }
       axios.get('https://cdn.wangdoukeji.com/index.php/seller/shop/getIndexStatus?shop_id=' + localStorage.getItem('shop_id')).then((res) => {
+        this.sub = res.data.data.sub
         this.shopStatusCode = res.data.data.shop_auth_status
         this.xiaochengxuStatusCode = res.data.data.applet_auth_status
         this.tanshiNum = res.data.data.tang_unpay_num
@@ -198,6 +208,9 @@
       },
       renzheng () {
         this.$router.push({path: '/manage/renzheng'})
+      },
+      subscribe () {
+        this.$router.push({path: '/manage/subscribe'})
       }
     }
   }
