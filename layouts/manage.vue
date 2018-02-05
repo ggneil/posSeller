@@ -43,6 +43,10 @@
           <i class="data-analysis"></i>
           数据分析
         </el-menu-item>
+        <el-menu-item index="/manage/asset">
+          <i class="data-asset"></i>
+          资产管理
+        </el-menu-item>
         <el-menu-item index="/manage/shopManage">
         <i class="store-management"></i>
         店铺管理
@@ -297,6 +301,9 @@ export default {
   }
   .data-analysis {
     background: url("../static/icon.png") 0 -72px no-repeat;
+  }
+  .data-asset {
+    background: url("../static/icon.png") 0 -144px no-repeat;
   }
   .store-management {
     background: url("../static/icon.png") 0 -120px no-repeat;
