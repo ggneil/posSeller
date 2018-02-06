@@ -3,7 +3,7 @@
     <el-tab-pane label="应用插件" name="first">
       <el-row class="zong">
         <el-col class="heng heng1">
-          <div>应用插件 / 满减</div>
+          <div class="crumbsNav">应用插件 / 满减</div>
         </el-col>
         <el-col class="heng">
           <div>满减</div>
@@ -47,7 +47,7 @@
                   <el-button
                     size="small"
                     type="danger"
-                    @click="printerDelete(scope.row)">删除</el-button>
+                    @click="fullDelete(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -157,6 +157,7 @@
           }
         })
       },
+      // 列表
       fullList () {
         axios.post('https://api.doudot.cn/api/plugin.rebate/get?shop_id=' + this.shopId).then((res) => {
           if (res.data.error) {
@@ -166,6 +167,23 @@
             })
           } else {
             this.fullTableData = res.data
+          }
+        })
+      },
+      // 删除
+      fullDelete (row) {
+        axios.post('https://api.doudot.cn/api/plugin.rebate/del', {id: row.id}).then((res) => {
+          if (res.data.error) {
+            this.$message({
+              type: 'error',
+              message: res.data.error.msg
+            })
+          } else {
+            this.$message({
+              type: 'success',
+              message: res.data.msg
+            })
+            this.fullList()
           }
         })
       }
@@ -203,5 +221,8 @@ a{color:#fdaa60;}
   color: #fc9538;
   padding: 10px 20px;
   cursor: pointer;
+}
+.crumbsNav {
+  color: #555;
 }
 </style>

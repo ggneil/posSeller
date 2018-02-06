@@ -3,7 +3,7 @@
     <el-tab-pane label="应用插件" name="first">
       <el-row class="zong">
         <el-col class="heng heng1">
-          <div>应用插件 / 裂变优惠券</div>
+          <div class="crumbsNav">应用插件 / 裂变优惠券</div>
         </el-col>
         <el-col class="heng">
           <div>裂变优惠券<span v-show="!show" class="returnOut" @click="returnOut">返回</span></div>
@@ -14,7 +14,7 @@
           <div v-show="show">
             <el-button type="primary" @click="show = false" size="small">设置裂变优惠券</el-button>
           </div>
-          <el-form v-show="!show" :model="payForm" :rules="rules" ref="payForm" label-width="100px" class="payForm">
+          <el-form v-show="!show" :model="fission" :rules="rules" ref="fission" label-width="100px" class="fission">
             <el-form-item 
               label="活动时间：">
               <div class="block">
@@ -31,7 +31,7 @@
               </div>
             </el-form-item>
             <el-form-item label="优惠券数：" prop="much">
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="fission.value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -43,9 +43,11 @@
             </el-form-item>
             <el-form-item label="优惠券：">
               <el-button size="small" @click="pageLoad">选择优惠券</el-button>
+              <span class="coupon" v-show="!couponShow">{{couponName}}</span>
             </el-form-item>
             <el-form-item>
-              <el-button size="small" type="primary" @click="addFull('payForm')">保存</el-button>
+              <el-button size="small" type="primary" @click="addFission('fission')">保存</el-button>
+              <el-button size="small" type="danger" v-show="deleteShow" @click="deleteFission">删除</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -60,7 +62,7 @@
           <el-table-column property="update_time" label="结束时间"></el-table-column>
           <el-table-column label="操作" width="100">
             <template scope="scope">
-              <el-button type="danger" @click="deleteC(scope.row.couponId)" size="small">选择</el-button>
+              <el-button type="danger" @click="selectCoupon(scope.row)" size="small">选择</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -78,16 +80,12 @@
         activeName: 'first',
         show: true,
         shopId: 0,
-        rules: {
-          much: [
-            { required: true, message: '请输入金额', trigger: 'blur' }
-          ]
-        },
-        payForm: {
-          radio: '1',
+        userId: '',
+        fission: {
+          value: '10',
+          coupon_id: '',
           startTime: '',
-          endTime: '',
-          much: ''
+          endTime: ''
         },
         timeQuantum: '',
         dialogTableVisible: false,
@@ -125,12 +123,17 @@
           value: '1',
           label: '1'
         }],
-        value: '10'
+        // 优惠券按钮
+        couponShow: true,
+        // 优惠券名称
+        couponName: '',
+        deleteShow: false
       }
     },
     beforeMount () {
       this.shopId = localStorage.getItem('shop_id')
       this.userId = localStorage.getItem('user_id')
+      this.fissionLoad()
     },
     methods: {
       // 返回按钮
@@ -143,13 +146,63 @@
       },
       // 时间设置
       timeQuantum1 (shijian) {
-        this.payForm.startTime = shijian[0]
-        this.payForm.endTime = shijian[1]
+        this.fission.startTime = shijian[0]
+        this.fission.endTime = shijian[1]
+      },
+      // 选择优惠券
+      selectCoupon (row) {
+        this.fission.coupon_id = row.coupon_id
+        this.couponName = row.name
+        this.couponShow = false
+        this.dialogTableVisible = false
+      },
+      // 数据加载
+      fissionLoad () {
+        axios.post('https://api.doudot.cn/api/plugin.fission/get?shop_id=' + this.shopId).then((res) => {
+          if (res.data.error) {
+            console.log(res.data.error.msg)
+            this.couponShow = true
+          } else {
+            this.fission = {
+              value: res.data.times,
+              coupon_id: res.data.coupon_id,
+              startTime: res.data.start_time,
+              endTime: res.data.end_time
+            }
+            this.timeQuantum = [res.data.start_time, res.data.end_time]
+            this.couponName = res.data.name
+            this.couponShow = false
+            this.show = false
+            this.deleteShow = true
+          }
+        })
+      },
+      // 数据删除
+      deleteFission () {
+        axios.post('https://api.doudot.cn/api/plugin.fission/del?shop_id=' + this.shopId).then((res) => {
+          if (res.data.error) {
+            console.log(res.data.error.msg)
+            this.couponShow = true
+            this.show = false
+          } else {
+            this.fission = {
+              value: res.data.times,
+              coupon_id: res.data.coupon_id,
+              startTime: res.data.start_time,
+              endTime: res.data.end_time
+            }
+            this.timeQuantum = []
+            this.couponName = ''
+            this.couponShow = true
+            this.show = true
+            this.deleteShow = false
+          }
+        })
       },
       // 优惠券加载
       pageLoad () {
         // 第一个分组请求
-        axios.post('/seller/coupon/couponlist?shop_id=' + this.shopId).then((res) => {
+        axios.post('/seller/coupon/couponSystemList?shop_id=' + this.shopId).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {
@@ -161,10 +214,10 @@
         })
       },
       // 保存
-      addFull (formName) {
+      addFission (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('https://api.doudot.cn/api/plugin.rebate/add', { shop_id: this.shopId, start_time: this.fullForm.startTime, end_time: this.fullForm.endTime, conditions: this.fullForm.value1, value: this.fullForm.value2 }).then((res) => {
+            axios.get('https://api.doudot.cn/api/plugin.fission/edit', { params: {shop_id: this.shopId, start_time: this.fission.startTime, end_time: this.fission.endTime, times: this.fission.value, coupon_id: this.fission.coupon_id} }).then((res) => {
               if (res.data.error) {
                 this.$message({
                   type: 'error',
@@ -173,8 +226,9 @@
               } else {
                 this.$message({
                   type: 'success',
-                  message: res.data.data.msg
+                  message: res.data.msg
                 })
+                this.handleClick()
               }
             })
           } else {
@@ -211,5 +265,11 @@ a{color:#fdaa60;}
 .radioInput {
   width: 80px;
   margin: 0 5px;
+}
+.coupon {
+  padding-left: 20px;
+}
+.crumbsNav {
+  color: #555;
 }
 </style>

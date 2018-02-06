@@ -112,31 +112,32 @@
                   v-model="formAddGoods.description" 
                   placeholder="商品描述（最多100字）"></el-input>
               </el-form-item>
-              <el-form-item label="价格：" prop="price">
+              <!-- <el-form-item label="价格：" prop="price">
                 <el-input type="number" v-model="formAddGoods.price" placeholder="00.00"></el-input>
-              </el-form-item>
-              <!-- <el-form-item
+              </el-form-item> -->
+              <el-form-item
                 v-for="(domain, index) in formAddGoods.domains"
                 :label="'规格'"
                 :key="domain.key"
-                :prop="'domains.' + index + '.value'"
+                :prop="'domains.' + index + '.specifications'"
                 :rules="{
                   required: true, message: '规格不能为空', trigger: 'blur'
                 }"
               >
-                <el-input v-model="domain.value" placeholder="规格" class="spec specInput"></el-input>
-                <el-input v-model="domain.value" placeholder="价格" class="spec specInput"></el-input>
-                <el-button @click.prevent="removeDomain(domain)" class="spec specDelete">删除</el-button>
+                <el-input v-model="domain.specifications" placeholder="规格" class="spec specInput"></el-input>
+                <el-input v-model="domain.spe_price" placeholder="价格" class="spec specInput"></el-input>
+                <el-input v-model="domain.ext_num" placeholder="数量" class="spec specInput"></el-input>
+                <el-button @click.prevent="removeDomain(domain)" v-show="index !== 0" class="spec specDelete">删除</el-button>
               </el-form-item>
               <el-form-item class="specAdd">
                 <el-button @click="addDomain" type="primary">添加规格</el-button>
-              </el-form-item> -->
+              </el-form-item>
               <el-form-item label="餐盒费：" prop="boxPrice">
                 <el-input type="number" v-model="formAddGoods.boxPrice" placeholder="00.00"></el-input>
               </el-form-item>
-              <el-form-item label="库存：" prop="num">
+              <!-- <el-form-item label="库存：" prop="num">
                 <el-input type="number" v-model="formAddGoods.num" placeholder="1000"></el-input>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="分组：" prop="group">
                 <el-checkbox-group v-model="formAddGoods.group">
                   <el-checkbox
@@ -240,9 +241,8 @@
         zhuangtaiBtn: '',
         shopId: '',
         input: '',
-        tagId: 1,
         imgId: 0,
-        groupId: '',
+        tagId: '',
         navId: '',
         goodsId: '',
         value: '所有状态', // 下拉框默认选项
@@ -275,7 +275,9 @@
           group: [],
           // 规格
           domains: [{
-            value: ''
+            specifications: '',
+            spe_price: '',
+            ext_num: ''
           }]
         },
         // 表格
@@ -291,7 +293,8 @@
         }, {
           value: '已上架',
           label: '已上架'
-        }]
+        }],
+        addIndex: 0
       }
     },
     beforeMount () {
@@ -305,16 +308,27 @@
     methods: {
       // 规格
       removeDomain (item) {
+        this.addIndex -= 1
         var index = this.formAddGoods.domains.indexOf(item)
-        if (index !== -1) {
+        if (index !== 0) {
           this.formAddGoods.domains.splice(index, 1)
         }
       },
       addDomain () {
-        this.formAddGoods.domains.push({
-          value: '',
-          key: Date.now()
-        })
+        this.addIndex += 1
+        if (this.addIndex >= 6) {
+          this.$message({
+            type: 'error',
+            message: '已经添加不了更多了'
+          })
+          this.addIndex = 5
+        } else {
+          this.formAddGoods.domains.push({
+            specifications: '',
+            spe_price: '',
+            ext_num: ''
+          })
+        }
       },
       // 搜索商品
       searchGoods (value1) {
@@ -376,10 +390,16 @@
       changeGoods (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/editGoods?goods_id=' + this.goodsId + '&img_id=' + this.imgId + '&goods_name=' + this.formAddGoods.name + '&goods_description=' + this.formAddGoods.description + '&goods_price=' + this.formAddGoods.price + '&box_price=' + this.formAddGoods.boxPrice + '&stock=' + this.formAddGoods.num + '&tag_id=' + this.groupId + '&shop_id=' + this.shopId).then((res) => {
+            console.log(this.formAddGoods.domains)
+            axios.get('https://api.doudot.cn/seller/goods/EditSpecificationGoods', { params: {goods_id: this.goodsId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, box_price: this.formAddGoods.boxPrice, specifications: this.formAddGoods.domains, tag_id: this.tagId, shop_id: this.shopId} }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
               } else {
+                this.$message({
+                  type: 'success',
+                  message: res.data.msg
+                })
+                this.addIndex = 0
                 axios.post('/seller/Goods/getGoodsList', { shop_id: this.shopId, tag_id: this.tableData[0].id }).then((res) => {
                   if (res.data.error) {
                     console.log(res.data.error.msg)
@@ -472,7 +492,7 @@
       },
       // 提交
       checkChange (tagId) {
-        this.groupId = tagId
+        this.tagId = tagId
         this.formAddGoods.group = []
         this.formAddGoods.group[0] = tagId
       },
@@ -480,7 +500,8 @@
       submitForm (formName, style) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/Goods/addGoods', { shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, goods_price: this.formAddGoods.price, box_price: this.formAddGoods.boxPrice, stock: this.formAddGoods.num, tag_id: this.groupId }).then((res) => {
+            console.log(this.formAddGoods.domains)
+            axios.get('https://api.doudot.cn/seller/goods/addSpecificationGoods', { params: {specifications: this.formAddGoods.domains, shop_id: this.shopId, img_id: this.imgId, goods_name: this.formAddGoods.name, goods_description: this.formAddGoods.description, box_price: this.formAddGoods.boxPrice, tag_id: this.tagId} }).then((res) => {
               if (res.data.error) {
                 this.$message({
                   type: 'error',
@@ -488,6 +509,7 @@
                 })
                 console.log(res.data.error.msg)
               } else {
+                this.addIndex = 0
                 this.formAddGoods.name = ''
                 this.formAddGoods.description = ''
                 this.formAddGoods.price = ''
@@ -676,7 +698,7 @@
       },
       // 商品编辑
       handleEdit1 (index, row) {
-        axios.post('/seller/Goods/getGoods', { goods_id: row.goodsId }).then((res) => {
+        axios.get('/seller/Goods/getGoods?goods_id=' + row.goodsId).then((res) => {
           if (res.data.error) {
             console.log(res.data.error.msg)
           } else {
@@ -695,6 +717,9 @@
             this.goodsId = res.data.good.goods_id
             this.imageUrl = 'https://cdn.wangdoukeji.com/' + res.data.good.path.replace(/\\/, '')
             this.hide = true
+            this.formAddGoods.domains = res.data.good.specifications
+            JSON.stringify(this.formAddGoods.domains)
+            console.log(this.formAddGoods.domains)
           }
         })
       },
@@ -781,6 +806,11 @@
         this.formAddGoods.group = []
         this.imageUrl = ''
         this.imgId = 0
+        this.formAddGoods.domains = [{
+          specifications: '',
+          spe_price: '',
+          ext_num: ''
+        }]
       },
       // 隐藏切换
       handleShow () {

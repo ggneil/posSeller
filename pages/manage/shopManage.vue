@@ -508,7 +508,7 @@
           <el-form-item label="设置品名:">
             <template>
               <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="1">365</el-radio>
-              <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="2">飞鹏</el-radio>
+              <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="2">飞鹅</el-radio>
               <el-radio :disabled="editDisabled" v-model="newPrinter.brandRadio" label="3">易联云(不支持K1/K2/K3)</el-radio>
             </template>
           </el-form-item>

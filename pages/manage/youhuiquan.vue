@@ -26,7 +26,7 @@
                 style="width: 100%">
                 <el-table-column
                   label="券名"
-                  width="150">
+                  width="100">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -36,8 +36,19 @@
                   </template>
                 </el-table-column>
                 <el-table-column
-                  label="面额"
+                  label="类型"
                   width="100">
+                  <template scope="scope">
+                    <el-row>
+                      <el-col>
+                        {{scope.row.active_receive}}
+                      </el-col>
+                    </el-row>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="面额"
+                  width="80">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -48,7 +59,7 @@
                 </el-table-column>
                 <el-table-column
                   label="数量"
-                  width="100">
+                  width="70">
                   <template scope="scope">
                     <el-row>
                       <el-col>
@@ -101,6 +112,10 @@
                       size="small"
                       @click="handleEdit2(scope.$index, scope.row)">{{ scope.row.couponStatusBtn }}</el-button>
                     <el-button
+                      type="primary"
+                      size="small"
+                      @click="changeType(scope.$index, scope.row.couponId)">{{ scope.row.active_receive }}</el-button>
+                    <el-button
                       type="danger"
                       @click="deleteC(scope.row.couponId)"
                       size="small">删除</el-button>
@@ -145,6 +160,14 @@
                     :picker-options="pickerOptions0">
                   </el-date-picker>
                 </div>
+              </el-form-item>
+              <el-form-item label="类型:" class="radio">
+                <template>         
+                  <el-radio v-model="quanRadio" label="0">活动券</el-radio>
+                  <el-radio v-model="quanRadio" label="1">店铺券</el-radio>
+                  <p class="explain">活动券为店铺内活动所使用的优惠券，如进店有礼、裂变优惠券可选择的优惠券</p>
+                  <p class="explain">店铺券是本店铺推出的优惠券，用户可在领券中心领取</p>
+                </template>
               </el-form-item>
               <el-button type="primary" class="btn" @click="submitForm('formAddCoupon')">保存</el-button>
             </el-form>
@@ -232,6 +255,8 @@
           startTime: '',
           endTime: ''
         },
+        // 单选
+        quanRadio: '0',
         // 表格
         tableData: [],
         tableData1: [],
@@ -267,6 +292,16 @@
       }
     },
     methods: {
+      // 改变券的类型
+      changeType (index, couponId) {
+        axios.get('https://api.doudot.cn/seller/coupon/changereceive?coupon_id=' + couponId).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.pageLoad()
+        })
+      },
       // 删除优惠券
       deleteC (couponid) {
         this.$confirm('此操作将永久删除该优惠券', '温馨提示', {
@@ -274,7 +309,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          axios.get('https://cdn.wangdoukeji.com/index.php/seller/coupon/deleteCoupon?coupon_id=' + couponid).then((res) => {
+          axios.get('https://api.doudot.cn/seller/coupon/deleteCoupon?coupon_id=' + couponid).then((res) => {
             this.$message({
               type: 'success',
               message: '操作成功'
@@ -398,12 +433,12 @@
                 console.log(1)
                 zhuangtai = '可使用'
                 zhuangtaiBtn = '下架'
-                this.tableData1.push({ num: this.groupGoods[keys].total_num, couponName: this.groupGoods[keys].name, denomination: this.groupGoods[keys].denomination + '元', couponId: this.groupGoods[keys].coupon_id, couponStatus: zhuangtai, couponStatusBtn: zhuangtaiBtn, startTime: timer(this.groupGoods[keys].use_start_time), endTime: timer(this.groupGoods[keys].use_end_time), xianzhi: this.groupGoods[keys].amount_limit + '元' })
+                this.tableData1.push({ active_receive: this.groupGoods[keys].active_receive, num: this.groupGoods[keys].total_num, couponName: this.groupGoods[keys].name, denomination: this.groupGoods[keys].denomination + '元', couponId: this.groupGoods[keys].coupon_id, couponStatus: zhuangtai, couponStatusBtn: zhuangtaiBtn, startTime: timer(this.groupGoods[keys].use_start_time), endTime: timer(this.groupGoods[keys].use_end_time), xianzhi: this.groupGoods[keys].amount_limit + '元' })
               } else {
                 console.log(2)
                 zhuangtai = '不可用'
                 zhuangtaiBtn = '上架'
-                this.tableData1.push({ num: this.groupGoods[keys].total_num, couponName: this.groupGoods[keys].name, denomination: this.groupGoods[keys].denomination + '元', couponId: this.groupGoods[keys].coupon_id, couponStatus: zhuangtai, couponStatusBtn: zhuangtaiBtn, startTime: timer(this.groupGoods[keys].use_start_time), endTime: timer(this.groupGoods[keys].use_end_time), xianzhi: this.groupGoods[keys].amount_limit + '元' })
+                this.tableData1.push({ active_receive: this.groupGoods[keys].active_receive, num: this.groupGoods[keys].total_num, couponName: this.groupGoods[keys].name, denomination: this.groupGoods[keys].denomination + '元', couponId: this.groupGoods[keys].coupon_id, couponStatus: zhuangtai, couponStatusBtn: zhuangtaiBtn, startTime: timer(this.groupGoods[keys].use_start_time), endTime: timer(this.groupGoods[keys].use_end_time), xianzhi: this.groupGoods[keys].amount_limit + '元' })
               }
             }
           }
@@ -456,7 +491,7 @@
       submitForm (formName, style) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.post('/seller/coupon/create', { shop_id: this.shopId, name: this.formAddCoupon.name, denomination: this.formAddCoupon.denomination, total_num: this.formAddCoupon.totalNum, amount_limit: this.formAddCoupon.amountLimit, use_start_time: this.formAddCoupon.startTime, use_end_time: this.formAddCoupon.endTime }).then((res) => {
+            axios.post('/seller/coupon/create', { active_receive: this.quanRadio, shop_id: this.shopId, name: this.formAddCoupon.name, denomination: this.formAddCoupon.denomination, total_num: this.formAddCoupon.totalNum, amount_limit: this.formAddCoupon.amountLimit, use_start_time: this.formAddCoupon.startTime, use_end_time: this.formAddCoupon.endTime }).then((res) => {
               if (res.data.error) {
                 console.log(res.data.error.msg)
                 console.log(this.formAddCoupon)
@@ -664,4 +699,5 @@
  .dish-content{height: 100%;background-color: white;min-height: 480px;overflow: auto;border-left: 1px solid #eee;}
  .bgWhite{background-color: white;padding: 30px 40px;}
  .imgSize{width: 40px;height: 40px;}
+ .explain{line-height: 10px; font-size:12px; color: #555;}
 </style>

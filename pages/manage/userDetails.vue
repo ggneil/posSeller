@@ -261,7 +261,7 @@ export default {
           })
         } else {
           that.$message({
-            type: 'success',
+            type: 'error',
             message: res.data.msg
           })
         }
