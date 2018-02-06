@@ -16,7 +16,7 @@
                         <el-input v-model="loginForm.sms" @keyup.enter.native="login" placeholder="验证码"></el-input>
                     </el-form-item>
                   <el-form-item>
-                    n<el-input placeholder="区域负责人ID（可选）"></el-input>
+                    <el-input placeholder="区域负责人ID（可选）"></el-input>
                   </el-form-item>
                     <el-form-item class="submit-box">
                         <el-button class="submit-btn" type="primary" v-bind:loading="submit_loading"  @click="login">注册</el-button>
