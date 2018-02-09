@@ -210,7 +210,7 @@
         this.$router.push({path: '/manage/renzheng'})
       },
       subscribe () {
-        this.$router.push({path: '/manage/subscribe'})
+        this.$router.push({path: '/manage/asset'})
       }
     }
   }

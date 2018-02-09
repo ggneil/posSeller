@@ -1,5 +1,8 @@
 <template>
   <el-row class="loginBg" type="flex" justify="center">
+    <router-link to="/">
+      <img src="~static/images/logo1.png" style="position:fixed;top: 30px;left: 30px;width: 250px;" alt="">
+    </router-link>
     <el-col :xs="18" :sm="12" :md="10" :lg="8">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -22,6 +25,8 @@
         </el-form>
       </el-card>
     </el-col>
+    <p style="color: white;text-align: center;position: fixed;bottom: 300px;right: 62px;">官方微信公众号<br>更快捷的管理方式</p>
+    <img src="~static/images/xiaohuangren.png" style="position: fixed;right: 0; bottom: 0;" alt="">
   </el-row>
 </template>
 

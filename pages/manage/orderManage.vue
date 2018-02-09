@@ -19,11 +19,11 @@
 					<div class="order_list">
 						<el-table ref="multipleTable" :data="tableData3" border tooltip-effect="dark" style="width: 100%">
 							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
+							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
 							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
-							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="120"></el-table-column>
 							<el-table-column prop="time" label="下单时间" width="180"></el-table-column>
 							<el-table-column label="操作" show-overflow-tooltip>
@@ -65,12 +65,12 @@
 					<div class="order_list">
 						<el-table ref="multipleTable1" :data="tableData4" border tooltip-effect="dark" style="width: 100%">
 							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
+							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="100"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="100" show-overflow-tooltip></el-table-column>
 							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
 							<el-table-column prop="tableNo" label="桌号" width="80"></el-table-column>
-							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="120"></el-table-column>
 							<el-table-column prop="time" label="下单时间" width="180"></el-table-column>
 							<el-table-column label="操作" show-overflow-tooltip>
@@ -112,11 +112,11 @@
 					<div class="order_list">
 						<el-table ref="multipleTable2" :data="tableData5" border tooltip-effect="dark" style="width: 100%">
 							<el-table-column prop="order_number" sortable label="订单号" width="180"></el-table-column>
+							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="pay_status" label="支付状态" width="80"></el-table-column>
 							<el-table-column prop="order_status" label="订单状态" width="80" show-overflow-tooltip></el-table-column>
 							<el-table-column prop="money_number" sortable label="金额" width="80"></el-table-column>
 							<el-table-column prop="pay_type" label="支付类型" width="80"></el-table-column>
-							<el-table-column prop="user_name" label="用户名" width="100"></el-table-column>
 							<el-table-column prop="order_tel" label="电话" width="110"></el-table-column>
 							<el-table-column prop="address" label="地址" width="120"></el-table-column>
 							<el-table-column prop="time" label="下单时间" width="180"></el-table-column>

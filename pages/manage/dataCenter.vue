@@ -257,6 +257,7 @@
               </el-table-column>
             </el-table>
           </el-row>
+          <div id="zhexiantu"></div>
         </div>
         <div v-show="!goodsShow">
           <el-table
@@ -449,7 +450,11 @@
         time: timerFirst.getFullYear() + '-' + (timerFirst.getMonth() + 1) + '-' + timerFirst.getDate() + '  ' + timerFirst.getHours() + '：' + timerFirst.getMinutes() + '：' + timerFirst.getSeconds(), // 时间
         activeName: 'first', // 第一个显示 商品管理
         goodsShow: true, // 显示商品人数详情
-        goodsDetailsData: [] // 商品分析详情数组
+        goodsDetailsData: [], // 商品分析详情数组
+        biaoTitle: '前十菜品分析柱状图',
+        dish: [],
+        dishes: ['菜品一', '菜品二', '菜品三', '菜品四', '菜品五', '菜品六', '菜品七'],
+        dishesNum: [10, 20, 33, 55, 66, 22, 11]
       }
     },
     beforeMount () {
@@ -463,6 +468,7 @@
         this.searchLoad()
         this.dealFormLoad()
         this.goodsInfoLoad()
+        this.dishesInfoLoad()
       },
       // 第一次日期筛选触发事件
       timeChange1 (shijian) {
@@ -629,6 +635,39 @@
       },
       customerData (userId) {
         this.$router.push({path: '/manage/userDetails?user_id=' + userId})
+      },
+      // 菜品分析加载
+      dishesInfoLoad () {
+        var that = this
+        axios.post('https://api.doudot.cn/seller/shop/shopGoodsAnalysis?shop_id=' + this.shopId).then((res) => {
+          if (res.data.code === 1) {
+            that.dishes = []
+            that.dishesNum = []
+            for (var i in res.data.data) {
+              that.dishes.push(i)
+              that.dishesNum.push(res.data.data[i])
+              that.dish.push({'name': i, 'num': res.data.data[i]})
+            }
+            that.dishes = that.dishes.slice(0, 10)
+            that.dishesNum = that.dishesNum.slice(0, 10)
+            let myChart = window.echarts.init(document.getElementById('zhexiantu'))
+            myChart.setOption({
+              title: {text: that.biaoTitle},
+              tooltip: {},
+              xAxis: {
+                data: that.dishes
+              },
+              yAxis: {},
+              series: [{
+                name: '销量',
+                type: 'bar',
+                data: that.dishesNum
+              }]
+            })
+          } else {
+            console.log(res.data.error.msg)
+          }
+        })
       }
     }
   }
@@ -642,4 +681,5 @@
  .txt-color-dark{color: #ccc;}
  .centerLine{line-height: 40px;padding: 20px 0 20px 20px;background-color: white;margin-top: 5px;border-bottom: 1px solid #eee}
  .footLine{margin-top: 5px;}
+ #zhexiantu{display: block;margin: 20px auto;width: 1000px;height: 300px;}
 </style>

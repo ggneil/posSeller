@@ -37,7 +37,7 @@
         </el-menu-item>
         <el-menu-item index="/manage/orderManage">
           <i class="order-administration"></i>
-          订单管理
+          订单列表
         </el-menu-item>
         <el-menu-item index="/manage/dataCenter">
           <i class="data-analysis"></i>
@@ -45,7 +45,7 @@
         </el-menu-item>
         <el-menu-item index="/manage/asset">
           <i class="data-asset"></i>
-          资产管理
+          我的资产
         </el-menu-item>
         <el-menu-item index="/manage/shopManage">
         <i class="store-management"></i>

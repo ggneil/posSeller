@@ -181,7 +181,7 @@
                 sortable
               ></el-table-column>
             </el-table>
-            <div id="zhexiantu"></div>
+            <!-- <div id="zhexiantu"></div> -->
           </el-col>
         </el-row>
         <el-dialog title="订单列表" :visible.sync="orderDetailsWindowShow">

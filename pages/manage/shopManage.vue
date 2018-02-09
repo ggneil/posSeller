@@ -179,8 +179,7 @@
               </el-form-item>
               <el-form-item prop="comment" label="店铺介绍"
                 :rules="[
-                  { required: true, message: '请输入店铺介绍' },
-                  { max: 150, message: '店铺介绍最多150个字', trigger: 'blur' }
+                  { required: true, message: '请输入店铺介绍' }
                 ]"> 
                 <el-input
                   v-model="shopInfo.comment"

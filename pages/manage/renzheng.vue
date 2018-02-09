@@ -252,6 +252,9 @@ export default {
         }, {
           label: '礼品鲜花',
           value: 5
+        }, {
+          label: '移民',
+          value: 6
         }]
       }
     }

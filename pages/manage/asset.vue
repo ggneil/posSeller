@@ -2,7 +2,14 @@
   <div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="我的资产" name="first">
+        <div class="title-asset">
+          <span class="title-contant">会员类型</span>
+        </div>
         <div class="page-top">
+          <div class="page-top-left">金卡会员预付一年1800（一年省1800）</div>
+          <div class="page-top-rgt">会员有效期：2018年2月5日- 2028年2 月4日</div>
+        </div>
+        <!-- <div class="page-top">
           <div class="page-top-left">
             <p>可用余额：<span class="red">{{balance}}</span>元</p>
             <p>(每天扣费：基础服务费和插件费，插件按年付)</p>
@@ -11,11 +18,32 @@
             <p>基础服务费：<span class="orange">{{service_charge}}</span>元</p>
             <p>拓展插件：<span class="blue">{{plugin_num}}</span>个</p>
           </div>
-        </div>
+        </div> -->
         <div class="title-asset">
-          <span class="title-contant">充值使用</span>
+          <span class="title-contant">会员充值</span>
         </div>
-        <div class="payMode">
+        <template>
+          <el-radio-group v-model="radioType">
+            <el-radio class="typeRadio" :label="1">金卡会员预付一年1800（一年省1800）</el-radio>
+            <el-radio class="typeRadio" :label="2">银卡会员预付半年1500（半年省300）</el-radio>
+            <el-radio class="typeRadio" :label="3">普通会员预付一个月300元用户</el-radio>
+            <el-radio class="typeRadio" :label="4">后付费用户（交易额*0.5%）
+              <span> 应交费用：</span>
+              <span @click="showModel" class="detailsList blue">查看清单</span>
+              <span class="gray">为了不影响服务建议您多充值</span>
+            </el-radio>
+          </el-radio-group>
+        </template>
+        <div class="payMode">  
+          <el-radio v-model="radioPay" label="1">
+            <img @click="wClick" class="img1" src='~static/images/weixin.png' alt="">
+          </el-radio>
+          <el-radio v-model="radioPay" disabled label="2">
+            <img @click="zClick" class="img2" :class="{ select: isSelectz }" src='~static/images/zhifubao.png' alt="">
+          </el-radio>
+          <el-button class="determineBtn" type="primary" @click="confirm">支付</el-button>
+        </div>
+        <!-- <div class="payMode">
           <img @click="wClick" class="img1" :class="{ select: isSelectw }" src='~static/images/weixin.png' alt="">
           <img @click="zClick" class="img2" :class="{ select: isSelectz }" src='~static/images/zhifubao.png' alt="">
         </div>
@@ -33,6 +61,10 @@
           </template>
           &nbsp;&nbsp;&nbsp;配置费用：<span class="orange">￥{{basePrice}}</span>
           <span class="green">&nbsp;&nbsp;&nbsp;省￥{{provincePrice}}</span>
+        </div> -->
+        
+        <div class="title-asset">
+          <span class="title-contant">增值服务</span>
         </div>
         <div class="title-h2">营销插件（可选）</div>
         <er-row class="henglan-title">
@@ -40,16 +72,24 @@
         </er-row>
         <el-row class="henglan">
           <div @click="chooseChajian(item.id, index)" v-for="(item, index) in option3" :key="item.id" class="marketing_a">
-            <el-col class="options marketing options1" :span="7" :offset="item.id%3 === 1 ? 0 : 1">
+            <el-col class="options marketing options1" :span="11">
               <el-row>
-                <el-col :span="4">
+                <el-col :span="2" class="isCheck">
+                  <i class="el-icon-circle-check checks" style="color: #13ce66"></i>
+                  <i class="el-icon-remove remove"></i>
+                </el-col>
+                <el-col :span="3">
                   <i :class="[item.type === 1 ? 'wxsmall' : '', item.type === 2 ? 'wxsmall1' : '', item.type === 3 ? 'wxsmall2' : '']">
                     <img :src="'https://api.doudot.cn/' + item.icon_path.replace(/\\/, '')" alt="">
                   </i>
                 </el-col>
-                <el-col class="right" :span="20">
+                <el-col class="right" :span="12">
                   <h3>{{ item.name }}</h3>
                   <span>{{ item.description }}</span>
+                </el-col>
+                <el-col class="right line" :span="7">
+                  <s class="pluginPrice">原价：98元/年</s>
+                  <div class="pluginPrice">促销：88元/年</div>
                 </el-col>
               </el-row>
             </el-col>
@@ -57,18 +97,9 @@
         </el-row>
         <div class="title-h2">总金额：<span class="orange">{{totalPrice}}</span>元</div>
         <div class="determine">
-          <el-button class="determineBtn" type="primary" @click="confirm">确认下单</el-button>
+          <el-button class="determineBtn" type="primary" @click="confirm">支付</el-button>
         </div>
       </el-tab-pane>
-      <!-- <el-tab-pane label="我的资产" name="fourth">
-        <el-row class="page-asset-sum">
-          <el-col span="8">
-            <p class="page-asset-title">店铺可用余额(元)</p>
-            <span class="page-asset-money">{{ balance }}</span>
-            <el-button type="primary" @click="recharge">充值</el-button>
-          </el-col>
-        </el-row>
-      </el-tab-pane> -->
       <el-tab-pane label="充值记录" name="second">
         <el-row class="page-asset-sum">
           <el-table
@@ -125,8 +156,8 @@
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="扫码支付" :visible.sync="centerDialogVisible" width="30%" center>
-      <span>使用微信扫码支付，成功后即时到账</span>
-      <p><img v-bind:src="payQrcode"/></p>
+      <span class="payerweima">使用微信扫码支付，成功后即时到账</span>
+      <p><img  class="payerweima" v-bind:src="payQrcode"/></p>
       <span slot="footer" class="dialog-footer">
       <el-button @click="centerDialogVisible = false">取 消</el-button>
     </span>
@@ -189,7 +220,10 @@
         // 插件数
         plugin_num: '',
         // 服务费
-        service_charge: ''
+        service_charge: '',
+        // 会员类型选择
+        radioType: 1,
+        radioPay: ''
       }
     },
     beforeMount () {
@@ -200,6 +234,9 @@
       })
     },
     methods: {
+      showModel () {
+        console.log(1)
+      },
       // 微信
       wClick () {
         this.isSelectw = true
@@ -282,11 +319,17 @@
       },
       chooseChajian (id, index) {
         var a = document.querySelectorAll('.options')
+        var checks = document.querySelectorAll('.checks')
+        var remove = document.querySelectorAll('.remove')
         if (this.oChajian[id + ''] === id) {
           delete this.oChajian[id + '']
-          a[index].className = 'options marketing options1 el-col el-col-7 el-col-offset-1'
+          checks[index].style.display = 'none'
+          remove[index].style.display = 'block'
+          a[index].className = 'options marketing options1 el-col el-col-11 el-col-offset-1'
         } else {
-          a[index].className = 'options marketing options1 el-col el-col-7 el-col-offset-1 optionsRed'
+          checks[index].style.display = 'block'
+          remove[index].style.display = 'none'
+          a[index].className = 'options marketing options1 el-col el-col-11 el-col-offset-1 optionsRed'
           this.oChajian[id + ''] = id
         }
         var arr = Object.keys(this.oChajian)
@@ -367,7 +410,7 @@
   .marketing {
     margin-left: 4.1667%;
   }
-  .marketing_a:nth-child(3n+1) .marketing{
+  .marketing_a:nth-child(2n+1) .marketing{
     margin-left: 0;
   }
   .page-asset-sum {
@@ -392,12 +435,17 @@
     color: #555;
     font-size: 14px;
     overflow: hidden;
+    margin-top: 10px;
   }
   .page-top-left,.page-top-rgt {
     float: left;
     width: 50%;
     padding-left: 20px;
     box-sizing: border-box;
+    color: #555;
+  }
+  .page-top-left {
+    border-right: 1px solid #eee; 
   }
   .red {
     color: red;
@@ -414,25 +462,34 @@
     color: #3b6e65;
     font-size: 12px;
   }
+  .gray {
+    color: #888;
+    margin-left: 10px;
+  }
   .title-asset {
     color: #555;
     padding-left: 20px;
-    height: 50px;
+    height: 41px;
+    background: #fc9538;
+    margin-top: 10px;
+    width: 98%;
   }
   .title-contant {
+    height: 41px;
+    line-height: 41px;
     padding: 10px;
-    color: #fc9538;
-    border-bottom: 2px solid #fc9538;
+    color: #fff;
+  }
+  .payMode {
+    margin-top: 20px;
   }
   .payMode .img1 {
-    height: 75px;
-    margin-left: 20px;
+    height: 45px;
     padding: 1px 10px;
     box-sizing: border-box;
   }
   .payMode .img2 {
-    height: 75px;
-    margin-left: 20px;
+    height: 45px;
     padding: 1px;
     box-sizing: border-box;
     cursor: not-allowed;
@@ -455,5 +512,37 @@
   .determineBtn {
     margin: 0 20%;
     padding: 10px 30px;
+  }
+  .payerweima {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+  /* 类型单选 */
+  .typeRadio {
+    display: block;
+    margin-left: 30px;
+    line-height: 50px;
+    color: #333;
+  }
+  .detailsList {
+    margin-left: 10px;
+  }
+  /* 插件价格 */
+  .pluginPrice {
+    font-size: 13px;
+  }
+  .line {
+    border-left: 1px solid #666;
+  }
+  .isCheck {
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+  }
+  /* 未选中的园 */
+  .checkGarden {
+    padding: 10px;
+    border-radius: 50%;
   }
 </style>
